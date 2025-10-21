@@ -15,6 +15,20 @@ public struct APIRequest<Response: Decodable> {
     public var headers: [String: String]?
     public var decoder: JSONDecoder = .init()
 
+    public init(
+        path: String,
+        query: [String: any Decodable]? = nil,
+        method: Method = .get,
+        headers: [String: String]? = nil,
+        decoder: JSONDecoder = .init()
+    ) {
+        self.path = path
+        self.query = query
+        self.method = method
+        self.headers = headers
+        self.decoder = decoder
+    }
+
     public enum Method {
         case get
         case post([String: Any])

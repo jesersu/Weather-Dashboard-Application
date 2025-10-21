@@ -37,28 +37,9 @@
 		CA67A3DF2EA75B80008025D2 /* WeDaAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WeDaAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		CA77CAA42EA7695200C43B53 /* Exceptions for "WeDaApp" folder in "WeDaApp" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Code/Dependencies/LocalStorageService/.gitkeep,
-				Code/Dependencies/WeatherService/.gitkeep,
-				Code/UI/Common/.gitkeep,
-				Code/UI/Main/Favorites/.gitkeep,
-				Code/UI/Main/History/.gitkeep,
-				Code/UI/Main/Search/.gitkeep,
-				Code/UI/Main/WeatherDetails/.gitkeep,
-			);
-			target = CA67A3C42EA75B7E008025D2 /* WeDaApp */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		CA67A3C72EA75B7E008025D2 /* WeDaApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				CA77CAA42EA7695200C43B53 /* Exceptions for "WeDaApp" folder in "WeDaApp" target */,
-			);
 			path = WeDaApp;
 			sourceTree = "<group>";
 		};
