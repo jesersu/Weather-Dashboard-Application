@@ -1,0 +1,74 @@
+//
+//  OpenWeatherMapEndpoint.swift
+//  WeDaApp
+//
+//  Created by Claude Code
+//  Copyright © 2025 Dollar General. All rights reserved.
+//
+
+import Foundation
+import NetworkingKit
+import ArkanaKeys
+
+public enum OpenWeatherMapEndpoint {
+    case currentWeather(city: String)
+    case forecast(city: String)
+    case currentWeatherByCoordinates(lat: Double, lon: Double)
+}
+
+extension OpenWeatherMapEndpoint: Endpoint {
+    public typealias Response = WeatherData
+
+    public var baseURL: URL {
+        URL(string: ArkanaKeys.Global().openWeatherMapBaseUrl)!
+    }
+
+    public var path: String {
+        switch self {
+        case .currentWeather, .currentWeatherByCoordinates:
+            return "/data/2.5/weather"
+        case .forecast:
+            return "/data/2.5/forecast"
+        }
+    }
+
+    public var query: [String: String] {
+        var params: [String: String] = [
+            "appid": ArkanaKeys.Global().openWeatherMapAPIKey,
+            "units": "metric"
+        ]
+
+        switch self {
+        case .currentWeather(let city), .forecast(let city):
+            params["q"] = city
+        case .currentWeatherByCoordinates(let lat, let lon):
+            params["lat"] = String(lat)
+            params["lon"] = String(lon)
+        }
+
+        return params
+    }
+
+    public var method: APIRequest<Response>.Method {
+        .get
+    }
+
+    public var headers: [String: String]? {
+        [
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        ]
+    }
+}
+
+// Forecast endpoint needs its own response type
+extension OpenWeatherMapEndpoint {
+    public func buildForecast() -> APIRequest<ForecastResponse> {
+        .init(
+            path: path,
+            query: query,
+            method: .get,
+            headers: headers
+        )
+    }
+}
