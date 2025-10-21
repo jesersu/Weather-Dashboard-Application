@@ -1,0 +1,5 @@
+environments:
+global_secrets:
+  - OpenWeatherMapAPIKey
+  - OpenWeatherMapBaseUrl
+environment_secrets:
