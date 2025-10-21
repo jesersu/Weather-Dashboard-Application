@@ -14,6 +14,7 @@ public enum OpenWeatherMapEndpoint {
     case currentWeather(city: String)
     case forecast(city: String)
     case currentWeatherByCoordinates(lat: Double, lon: Double)
+    case geocoding(query: String, limit: Int)
 }
 
 extension OpenWeatherMapEndpoint: Endpoint {
@@ -29,21 +30,27 @@ extension OpenWeatherMapEndpoint: Endpoint {
             return "/data/2.5/weather"
         case .forecast:
             return "/data/2.5/forecast"
+        case .geocoding:
+            return "/geo/1.0/direct"
         }
     }
 
     public var query: [String: String] {
         var params: [String: String] = [
-            "appid": ArkanaKeys.Global().openWeatherMapAPIKey,
-            "units": "metric"
+            "appid": ArkanaKeys.Global().openWeatherMapAPIKey
         ]
 
         switch self {
         case .currentWeather(let city), .forecast(let city):
+            params["units"] = "metric"
             params["q"] = city
         case .currentWeatherByCoordinates(let lat, let lon):
+            params["units"] = "metric"
             params["lat"] = String(lat)
             params["lon"] = String(lon)
+        case .geocoding(let query, let limit):
+            params["q"] = query
+            params["limit"] = String(limit)
         }
 
         return params
@@ -64,6 +71,16 @@ extension OpenWeatherMapEndpoint: Endpoint {
 // Forecast endpoint needs its own response type
 extension OpenWeatherMapEndpoint {
     public func buildForecast() -> APIRequest<ForecastResponse> {
+        .init(
+            path: path,
+            query: query,
+            method: .get,
+            headers: headers
+        )
+    }
+
+    // Geocoding endpoint returns an array of GeocodeResult
+    public func buildGeocode() -> APIRequest<[GeocodeResult]> {
         .init(
             path: path,
             query: query,

@@ -26,6 +26,8 @@ public enum UITestIDs {
         case searchField = "SearchViewSearchField"
         case searchButton = "SearchViewSearchButton"
         case resultsScrollView = "SearchViewResultsScrollView"
+        case suggestionsList = "SearchViewSuggestionsList"
+        case suggestionItem = "SearchViewSuggestionItem"
     }
 
     public enum WeatherDetailsView: String {

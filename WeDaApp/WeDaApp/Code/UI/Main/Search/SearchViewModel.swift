@@ -22,10 +22,18 @@ final class SearchViewModel: ObservableObject {
     @Published var searchText = ""
     @Published var isShowingCachedData = false
 
+    // Autocomplete properties
+    @Published private(set) var citySuggestions: [GeocodeResult] = []
+    @Published private(set) var showSuggestions = false
+
     // MARK: - Dependencies
 
     private let weatherService: WeatherServiceProtocol
     private let storageService: LocalStorageServiceProtocol
+
+    // MARK: - Private Properties
+
+    private var searchTask: Task<Void, Never>?
 
     // MARK: - Initialization
 
@@ -96,6 +104,7 @@ final class SearchViewModel: ObservableObject {
         error = nil
         searchText = ""
         isShowingCachedData = false
+        hideSuggestions()
     }
 
     /// Retry last search
@@ -103,6 +112,62 @@ final class SearchViewModel: ObservableObject {
         Task {
             await search(city: searchText)
         }
+    }
+
+    /// Search for city suggestions with debouncing (300ms delay)
+    func searchCities(query: String) {
+        // Cancel previous search task
+        searchTask?.cancel()
+
+        // Validate minimum query length
+        guard query.count >= 3 else {
+            citySuggestions = []
+            showSuggestions = false
+            return
+        }
+
+        // Create new debounced search task
+        searchTask = Task {
+            // Wait 300ms before searching
+            try? await Task.sleep(nanoseconds: 300_000_000)
+
+            // Check if task was cancelled during sleep
+            guard !Task.isCancelled else { return }
+
+            do {
+                LogInfo("Searching cities for: \(query)")
+                let results = try await weatherService.searchCities(query: query, limit: 5)
+                citySuggestions = results
+                showSuggestions = !results.isEmpty
+                LogInfo("Found \(results.count) city suggestions")
+            } catch {
+                LogError("Failed to fetch city suggestions: \(error)")
+                // Silently fail - don't interrupt user's typing experience
+                citySuggestions = []
+                showSuggestions = false
+            }
+        }
+    }
+
+    /// Handle selection of a city suggestion
+    func selectSuggestion(_ result: GeocodeResult) {
+        LogInfo("Selected city: \(result.displayName)")
+
+        // Update search text and hide suggestions
+        searchText = result.name
+        hideSuggestions()
+
+        // Auto-load weather for selected city
+        Task {
+            await search(city: result.name)
+        }
+    }
+
+    /// Hide suggestions dropdown
+    func hideSuggestions() {
+        showSuggestions = false
+        citySuggestions = []
+        searchTask?.cancel()
     }
 
     // MARK: - Private Methods

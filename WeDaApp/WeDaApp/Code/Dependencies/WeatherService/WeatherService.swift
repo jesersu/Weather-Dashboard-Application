@@ -14,6 +14,7 @@ public protocol WeatherServiceProtocol {
     func fetchCurrentWeather(city: String) async throws -> WeatherData
     func fetchForecast(city: String) async throws -> ForecastResponse
     func fetchWeatherByCoordinates(lat: Double, lon: Double) async throws -> WeatherData
+    func searchCities(query: String, limit: Int) async throws -> [GeocodeResult]
 }
 
 /// Service for fetching weather data from OpenWeatherMap API
@@ -54,6 +55,18 @@ public struct WeatherService: WeatherServiceProtocol {
     public func fetchWeatherByCoordinates(lat: Double, lon: Double) async throws -> WeatherData {
         let endpoint = OpenWeatherMapEndpoint.currentWeatherByCoordinates(lat: lat, lon: lon)
         let request = endpoint.build()
+        return try await apiClient.request(request)
+    }
+
+    /// Search for cities matching a query (for autocomplete)
+    /// - Parameters:
+    ///   - query: Search query (city name)
+    ///   - limit: Maximum number of results to return
+    /// - Returns: Array of matching geocode results
+    /// - Throws: APIError if request fails
+    public func searchCities(query: String, limit: Int = 5) async throws -> [GeocodeResult] {
+        let endpoint = OpenWeatherMapEndpoint.geocoding(query: query, limit: limit)
+        let request = endpoint.buildGeocode()
         return try await apiClient.request(request)
     }
 }

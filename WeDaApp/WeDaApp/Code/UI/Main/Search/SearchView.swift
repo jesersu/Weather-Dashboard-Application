@@ -16,7 +16,7 @@ struct SearchView: View {
 
     var body: some View {
         NavigationStack {
-            ZStack {
+            ZStack(alignment: .top) {
                 if viewModel.isLoading {
                     LoadingView(message: "Searching weather...")
                 } else if let error = viewModel.error {
@@ -74,6 +74,56 @@ struct SearchView: View {
                             .padding(.horizontal)
                     }
                 }
+
+                // Autocomplete suggestions overlay
+                if viewModel.showSuggestions && !viewModel.citySuggestions.isEmpty {
+                    VStack {
+                        Spacer()
+                            .frame(height: 60) // Space for navigation bar and search field
+
+                        ScrollView {
+                            VStack(alignment: .leading, spacing: 0) {
+                                ForEach(viewModel.citySuggestions) { suggestion in
+                                    Button {
+                                        viewModel.selectSuggestion(suggestion)
+                                    } label: {
+                                        HStack {
+                                            VStack(alignment: .leading, spacing: 4) {
+                                                Text(suggestion.name)
+                                                    .font(.headline)
+                                                    .foregroundColor(.primary)
+
+                                                Text(suggestion.displayName)
+                                                    .font(.caption)
+                                                    .foregroundColor(.secondary)
+                                            }
+
+                                            Spacer()
+
+                                            Image(systemName: "chevron.right")
+                                                .font(.caption)
+                                                .foregroundColor(.secondary)
+                                        }
+                                        .padding()
+                                        .background(Color(.systemBackground))
+                                    }
+                                    .accessibilityIdentifier("\(UITestIDs.SearchView.suggestionItem.rawValue)_\(suggestion.id)")
+
+                                    Divider()
+                                }
+                            }
+                            .background(Color(.systemBackground))
+                            .cornerRadius(12)
+                            .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
+                            .padding(.horizontal)
+                        }
+                        .frame(maxHeight: 300)
+                        .accessibilityIdentifier(UITestIDs.SearchView.suggestionsList.rawValue)
+
+                        Spacer()
+                    }
+                    .transition(.opacity.combined(with: .move(edge: .top)))
+                }
             }
             .navigationTitle("Search")
             .searchable(
@@ -82,9 +132,13 @@ struct SearchView: View {
                 prompt: "Enter city name"
             )
             .onSubmit(of: .search) {
+                viewModel.hideSuggestions()
                 Task {
                     await viewModel.search(city: viewModel.searchText)
                 }
+            }
+            .onChange(of: viewModel.searchText) { oldValue, newValue in
+                viewModel.searchCities(query: newValue)
             }
             .toolbar {
                 if viewModel.weatherData != nil {
