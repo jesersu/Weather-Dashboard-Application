@@ -26,6 +26,18 @@ struct SearchView: View {
                 } else if let weather = viewModel.weatherData {
                     ScrollView {
                         VStack(spacing: 20) {
+                            // Offline indicator
+                            if viewModel.isShowingCachedData {
+                                HStack {
+                                    Image(systemName: "wifi.slash")
+                                    Text("Showing cached data (offline)")
+                                        .font(.caption)
+                                }
+                                .foregroundColor(.orange)
+                                .padding(.horizontal)
+                                .padding(.top, 8)
+                            }
+
                             WeatherCard(weatherData: weather)
                                 .padding()
 
