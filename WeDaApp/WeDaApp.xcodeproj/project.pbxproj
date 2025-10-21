@@ -6,6 +6,14 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		CA77CA9D2EA7657000C43B53 /* NetworkingKit in Frameworks */ = {isa = PBXBuildFile; productRef = CA77CA9C2EA7657000C43B53 /* NetworkingKit */; };
+		CA77CA9F2EA7657000C43B53 /* DollarGeneralTemplateHelpers in Frameworks */ = {isa = PBXBuildFile; productRef = CA77CA9E2EA7657000C43B53 /* DollarGeneralTemplateHelpers */; };
+		CA77CAA12EA7657000C43B53 /* DollarGeneralPersist in Frameworks */ = {isa = PBXBuildFile; productRef = CA77CAA02EA7657000C43B53 /* DollarGeneralPersist */; };
+		CA880EAE2EA76C7C00C875AE /* ArkanaKeysInterfaces in Frameworks */ = {isa = PBXBuildFile; productRef = CA880EAD2EA76C7C00C875AE /* ArkanaKeysInterfaces */; };
+		CA880EB02EA76C7C00C875AE /* ArkanaKeys in Frameworks */ = {isa = PBXBuildFile; productRef = CA880EAF2EA76C7C00C875AE /* ArkanaKeys */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		CA67A3D62EA75B80008025D2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -29,9 +37,28 @@
 		CA67A3DF2EA75B80008025D2 /* WeDaAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WeDaAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		CA77CAA42EA7695200C43B53 /* Exceptions for "WeDaApp" folder in "WeDaApp" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Code/Dependencies/LocalStorageService/.gitkeep,
+				Code/Dependencies/WeatherService/.gitkeep,
+				Code/UI/Common/.gitkeep,
+				Code/UI/Main/Favorites/.gitkeep,
+				Code/UI/Main/History/.gitkeep,
+				Code/UI/Main/Search/.gitkeep,
+				Code/UI/Main/WeatherDetails/.gitkeep,
+			);
+			target = CA67A3C42EA75B7E008025D2 /* WeDaApp */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		CA67A3C72EA75B7E008025D2 /* WeDaApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				CA77CAA42EA7695200C43B53 /* Exceptions for "WeDaApp" folder in "WeDaApp" target */,
+			);
 			path = WeDaApp;
 			sourceTree = "<group>";
 		};
@@ -52,6 +79,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CA880EB02EA76C7C00C875AE /* ArkanaKeys in Frameworks */,
+				CA77CA9D2EA7657000C43B53 /* NetworkingKit in Frameworks */,
+				CA77CAA12EA7657000C43B53 /* DollarGeneralPersist in Frameworks */,
+				CA880EAE2EA76C7C00C875AE /* ArkanaKeysInterfaces in Frameworks */,
+				CA77CA9F2EA7657000C43B53 /* DollarGeneralTemplateHelpers in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +110,7 @@
 				CA67A3C72EA75B7E008025D2 /* WeDaApp */,
 				CA67A3D82EA75B80008025D2 /* WeDaAppTests */,
 				CA67A3E22EA75B80008025D2 /* WeDaAppUITests */,
+				CA77CA9B2EA7657000C43B53 /* Frameworks */,
 				CA67A3C62EA75B7E008025D2 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -90,6 +123,13 @@
 				CA67A3DF2EA75B80008025D2 /* WeDaAppUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		CA77CA9B2EA7657000C43B53 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -112,6 +152,11 @@
 			);
 			name = WeDaApp;
 			packageProductDependencies = (
+				CA77CA9C2EA7657000C43B53 /* NetworkingKit */,
+				CA77CA9E2EA7657000C43B53 /* DollarGeneralTemplateHelpers */,
+				CA77CAA02EA7657000C43B53 /* DollarGeneralPersist */,
+				CA880EAD2EA76C7C00C875AE /* ArkanaKeysInterfaces */,
+				CA880EAF2EA76C7C00C875AE /* ArkanaKeys */,
 			);
 			productName = WeDaApp;
 			productReference = CA67A3C52EA75B7E008025D2 /* WeDaApp.app */;
@@ -195,6 +240,13 @@
 			);
 			mainGroup = CA67A3BC2EA75B7E008025D2;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				CA77CA982EA760F300C43B53 /* XCLocalSwiftPackageReference "../NetworkingKit" */,
+				CA77CA992EA7612100C43B53 /* XCLocalSwiftPackageReference "../DollarGeneralTemplateHelpers" */,
+				CA77CA9A2EA7615000C43B53 /* XCLocalSwiftPackageReference "../DollarGeneralPersist" */,
+				CA77CAA22EA7674400C43B53 /* XCLocalSwiftPackageReference "../ArkanaKeys/ArkanaKeysInterfaces" */,
+				CA77CAA32EA7675800C43B53 /* XCLocalSwiftPackageReference "../ArkanaKeys/ArkanaKeys" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CA67A3C62EA75B7E008025D2 /* Products */;
 			projectDirPath = "";
@@ -552,6 +604,57 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		CA77CA982EA760F300C43B53 /* XCLocalSwiftPackageReference "../NetworkingKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../NetworkingKit;
+		};
+		CA77CA992EA7612100C43B53 /* XCLocalSwiftPackageReference "../DollarGeneralTemplateHelpers" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../DollarGeneralTemplateHelpers;
+		};
+		CA77CA9A2EA7615000C43B53 /* XCLocalSwiftPackageReference "../DollarGeneralPersist" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../DollarGeneralPersist;
+		};
+		CA77CAA22EA7674400C43B53 /* XCLocalSwiftPackageReference "../ArkanaKeys/ArkanaKeysInterfaces" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../ArkanaKeys/ArkanaKeysInterfaces;
+		};
+		CA77CAA32EA7675800C43B53 /* XCLocalSwiftPackageReference "../ArkanaKeys/ArkanaKeys" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../ArkanaKeys/ArkanaKeys;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		CA77CA9C2EA7657000C43B53 /* NetworkingKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CA77CA982EA760F300C43B53 /* XCLocalSwiftPackageReference "../NetworkingKit" */;
+			productName = NetworkingKit;
+		};
+		CA77CA9E2EA7657000C43B53 /* DollarGeneralTemplateHelpers */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CA77CA992EA7612100C43B53 /* XCLocalSwiftPackageReference "../DollarGeneralTemplateHelpers" */;
+			productName = DollarGeneralTemplateHelpers;
+		};
+		CA77CAA02EA7657000C43B53 /* DollarGeneralPersist */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CA77CA9A2EA7615000C43B53 /* XCLocalSwiftPackageReference "../DollarGeneralPersist" */;
+			productName = DollarGeneralPersist;
+		};
+		CA880EAD2EA76C7C00C875AE /* ArkanaKeysInterfaces */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CA77CAA22EA7674400C43B53 /* XCLocalSwiftPackageReference "../ArkanaKeys/ArkanaKeysInterfaces" */;
+			productName = ArkanaKeysInterfaces;
+		};
+		CA880EAF2EA76C7C00C875AE /* ArkanaKeys */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CA77CAA32EA7675800C43B53 /* XCLocalSwiftPackageReference "../ArkanaKeys/ArkanaKeys" */;
+			productName = ArkanaKeys;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = CA67A3BD2EA75B7E008025D2 /* Project object */;
 }

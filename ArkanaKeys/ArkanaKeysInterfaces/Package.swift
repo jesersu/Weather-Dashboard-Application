@@ -9,7 +9,7 @@ let package = Package(
     name: "ArkanaKeysInterfaces",
     platforms: [
         .macOS(.v11),
-        .iOS(.v15),
+        .iOS(.v11),
         .tvOS(.v11),
         .watchOS(.v4),
     ],
