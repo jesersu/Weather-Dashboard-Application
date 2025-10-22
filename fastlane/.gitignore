@@ -1,0 +1,34 @@
+# Fastlane gitignore
+# Ignore all files in the fastlane directory except Fastfile and Appfile
+
+# Test outputs
+test_output/
+xcov_output/
+screenshots/
+builds/
+
+# Reports
+report.xml
+*.ipa
+*.dSYM.zip
+
+# Temporary files
+*.mobileprovision
+*.certSigningRequest
+*.p12
+
+# Deliver/Supply metadata
+metadata/
+Preview.html
+
+# Snapshot generated screenshots
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/screenshots/screenshots.html
+
+# Credentials (never commit these!)
+*.p8
+*.cer
+*.p12
+*.mobileprovision
+AuthKey_*.p8

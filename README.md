@@ -179,6 +179,180 @@ xcrun simctl list devices available | grep iPhone
 
 ---
 
+## 🤖 CI/CD Pipeline
+
+### Overview
+
+The project uses **Fastlane + GitHub Actions** for automated builds, testing, code quality checks, and deployment to TestFlight.
+
+### Status Badges
+
+![CI](https://github.com/jesersu/Weather-Dashboard-Application/workflows/CI/badge.svg)
+![Deploy](https://github.com/jesersu/Weather-Dashboard-Application/workflows/Deploy%20to%20TestFlight/badge.svg)
+[![codecov](https://codecov.io/gh/jesersu/Weather-Dashboard-Application/branch/main/graph/badge.svg)](https://codecov.io/gh/jesersu/Weather-Dashboard-Application)
+
+### CI/CD Workflows
+
+#### 1. Continuous Integration (CI)
+**Triggers**: Every push and pull request to `main` or `develop` branches
+
+**Workflow**: `.github/workflows/ci.yml`
+
+**Steps**:
+1. ✅ Build the app (Debug configuration)
+2. 🧪 Run all 43 tests with code coverage
+3. 📊 Generate code coverage reports
+4. 📤 Upload coverage to Codecov
+5. 🔍 Run SwiftLint for code quality checks
+
+**Local Usage**:
+```bash
+# Run tests locally with fastlane
+bundle exec fastlane test
+
+# Run quick tests (no coverage)
+bundle exec fastlane test_quick
+
+# Run SwiftLint
+bundle exec fastlane lint
+
+# Auto-fix SwiftLint issues
+bundle exec fastlane lint_fix
+```
+
+#### 2. Deployment to TestFlight
+**Triggers**:
+- Git tags matching `v*.*.*` (e.g., `v1.0.0`)
+- Manual workflow dispatch
+
+**Workflow**: `.github/workflows/deploy.yml`
+
+**Steps**:
+1. ✅ Build the app (Release configuration)
+2. 🧪 Run all tests
+3. 📦 Archive and sign the app
+4. 🚀 Upload to TestFlight via App Store Connect API
+5. 🏷️ Create GitHub Release with changelog
+
+**Create a Release**:
+```bash
+# Tag a new version
+git tag -a v1.0.0 -m "Release version 1.0.0"
+git push origin v1.0.0
+
+# This automatically triggers the deployment workflow
+```
+
+**Manual Deployment**:
+```bash
+# Deploy to TestFlight locally
+bundle exec fastlane beta
+
+# Deploy to App Store
+bundle exec fastlane release
+```
+
+### Fastlane Configuration
+
+The project includes these Fastlane lanes:
+
+| Lane | Description | Command |
+|------|-------------|---------|
+| `test` | Run all tests with code coverage | `bundle exec fastlane test` |
+| `test_quick` | Run tests without coverage (faster) | `bundle exec fastlane test_quick` |
+| `build` | Build app for testing (Debug) | `bundle exec fastlane build` |
+| `build_release` | Build app for release | `bundle exec fastlane build_release` |
+| `lint` | Run SwiftLint | `bundle exec fastlane lint` |
+| `lint_fix` | Auto-fix SwiftLint issues | `bundle exec fastlane lint_fix` |
+| `beta` | Deploy to TestFlight | `bundle exec fastlane beta` |
+| `release` | Deploy to App Store | `bundle exec fastlane release` |
+| `setup` | Setup development environment | `bundle exec fastlane setup` |
+
+### Setting Up CI/CD
+
+#### Prerequisites for Deployment
+
+To enable TestFlight deployment, you need to configure these GitHub Secrets:
+
+1. **App Store Connect API Key**:
+   - Go to [App Store Connect > Users and Access > Keys](https://appstoreconnect.apple.com/access/api)
+   - Create a new API Key with "Developer" role
+   - Download the `.p8` file
+   - Add to GitHub Secrets:
+     - `APP_STORE_CONNECT_API_KEY_ID`: Your Key ID
+     - `APP_STORE_CONNECT_API_ISSUER_ID`: Your Issuer ID
+     - `APP_STORE_CONNECT_API_KEY_CONTENT`: Base64-encoded content of `.p8` file
+       ```bash
+       cat AuthKey_XXXXXXXXXX.p8 | base64
+       ```
+
+2. **Code Signing Certificates**:
+   - Export your distribution certificate as `.p12`
+   - Add to GitHub Secrets:
+     - `CERTIFICATES_P12`: Base64-encoded `.p12` file
+     - `CERTIFICATES_PASSWORD`: Password for the `.p12` file
+     - `KEYCHAIN_PASSWORD`: Temporary keychain password (any secure string)
+
+3. **Provisioning Profile**:
+   - Download your App Store provisioning profile from Apple Developer
+   - Add to GitHub Secrets:
+     - `PROVISIONING_PROFILE`: Base64-encoded `.mobileprovision` file
+
+4. **Optional Secrets**:
+   - `CODECOV_TOKEN`: For code coverage reports (get from [Codecov.io](https://codecov.io))
+   - `FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD`: App-specific password for 2FA
+
+#### Installing Dependencies
+
+```bash
+# Install Ruby dependencies (fastlane, arkana)
+bundle install
+
+# Setup development environment (runs bundle install + arkana)
+bundle exec fastlane setup
+```
+
+### Code Quality
+
+**SwiftLint Configuration**: `.swiftlint.yml`
+
+The project enforces code quality standards:
+- ✅ Consistent code style
+- ✅ Best practices enforcement
+- ✅ Automatic fix suggestions
+- ✅ Custom rules for project patterns
+
+**File Headers**: All Swift files must have proper headers:
+```swift
+//
+//  FileName.swift
+//  WeDaApp
+//
+//  Created by Your Name
+//  Copyright © 2025 Dollar General. All rights reserved.
+//
+```
+
+### Code Coverage
+
+Code coverage reports are:
+- Generated on every CI run
+- Uploaded to Codecov
+- Excluded paths:
+  - Generated files (ArkanaKeys)
+  - Mock objects
+  - Third-party packages
+  - UI Tests
+  - App/Scene delegates
+
+**View Coverage Locally**:
+```bash
+bundle exec fastlane test
+open fastlane/xcov_output/index.html
+```
+
+---
+
 ## 📂 Project Structure
 
 ```
@@ -430,9 +604,9 @@ Test Suites:
 
 ## 🐛 Known Issues
 
-- Quick/Nimble BDD framework not yet integrated
 - Certificate pinning (TrustKit) not configured
 - Weather icons currently use SF Symbols instead of OpenWeatherMap icons
+- WeatherServiceSpec async tests need refinement (LocalStorageServiceSpec working perfectly)
 
 ---
 
@@ -453,14 +627,20 @@ Test Suites:
 ### Ruby Gems (Development)
 
 - **arkana** (v2.0.0+) - Encrypted secrets management
+- **fastlane** - Automation and deployment
+- **cocoapods** - Dependency management for SwiftLint
   ```bash
-  gem install arkana
+  bundle install
   ```
+
+### Testing Frameworks
+
+- **Quick + Nimble** - BDD testing framework (LocalStorageServiceSpec with 13 passing tests)
 
 ### Future Considerations
 
 - **Nuke** - For optimized remote weather icon loading
-- **Quick + Nimble** - BDD testing framework (not yet implemented)
+- **TrustKit** - Certificate pinning for enhanced security
 
 ---
 

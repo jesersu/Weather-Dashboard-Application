@@ -1,0 +1,180 @@
+# Fastfile for WeDaApp - Weather Dashboard Application
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+
+default_platform(:ios)
+
+platform :ios do
+  # Variables
+  WORKSPACE = "WeDaApp.xcworkspace"
+  SCHEME = "WeDaApp"
+
+  # Before all lanes
+  before_all do
+    ensure_git_status_clean unless ENV['CI']
+  end
+
+  # MARK: - Testing Lanes
+
+  desc "Run all unit and integration tests"
+  desc "This lane runs all 43 tests with code coverage enabled"
+  lane :test do
+    run_tests(
+      workspace: WORKSPACE,
+      scheme: SCHEME,
+      devices: ["iPhone 16 Pro"],
+      code_coverage: true,
+      output_directory: "./fastlane/test_output",
+      output_types: "html,junit",
+      clean: true
+    )
+
+    # Generate code coverage report
+    xcov(
+      workspace: WORKSPACE,
+      scheme: SCHEME,
+      output_directory: "./fastlane/xcov_output",
+      ignore_file_path: "./.xcovignore"
+    )
+  end
+
+  desc "Run tests without code coverage (faster)"
+  lane :test_quick do
+    run_tests(
+      workspace: WORKSPACE,
+      scheme: SCHEME,
+      devices: ["iPhone 16 Pro"],
+      code_coverage: false,
+      clean: false
+    )
+  end
+
+  # MARK: - Build Lanes
+
+  desc "Build the app for testing"
+  lane :build do
+    build_app(
+      workspace: WORKSPACE,
+      scheme: SCHEME,
+      configuration: "Debug",
+      skip_package_ipa: true,
+      clean: true
+    )
+  end
+
+  desc "Build the app for release"
+  lane :build_release do
+    # Increment build number based on git commits
+    increment_build_number(
+      xcodeproj: "WeDaApp/WeDaApp.xcodeproj",
+      build_number: number_of_commits
+    )
+
+    build_app(
+      workspace: WORKSPACE,
+      scheme: SCHEME,
+      configuration: "Release",
+      export_method: "app-store",
+      output_directory: "./fastlane/builds",
+      clean: true
+    )
+  end
+
+  # MARK: - Code Quality Lanes
+
+  desc "Run SwiftLint"
+  lane :lint do
+    swiftlint(
+      mode: :lint,
+      executable: "Pods/SwiftLint/swiftlint",
+      raise_if_swiftlint_error: true,
+      strict: true
+    )
+  end
+
+  desc "Auto-fix SwiftLint issues"
+  lane :lint_fix do
+    swiftlint(
+      mode: :autocorrect,
+      executable: "Pods/SwiftLint/swiftlint"
+    )
+  end
+
+  # MARK: - Deployment Lanes
+
+  desc "Deploy a new version to TestFlight"
+  desc "Requires App Store Connect API Key"
+  lane :beta do
+    # Ensure we're on a clean state
+    ensure_git_status_clean
+
+    # Run tests first
+    test
+
+    # Build release version
+    build_release
+
+    # Upload to TestFlight
+    upload_to_testflight(
+      skip_waiting_for_build_processing: true,
+      notify_external_testers: false,
+      changelog: "Bug fixes and improvements"
+    )
+
+    # Tag the release
+    add_git_tag(
+      tag: "beta/#{get_version_number(xcodeproj: 'WeDaApp/WeDaApp.xcodeproj')}-#{get_build_number(xcodeproj: 'WeDaApp/WeDaApp.xcodeproj')}"
+    )
+
+    push_git_tags
+  end
+
+  desc "Deploy to App Store"
+  desc "Requires App Store Connect API Key"
+  lane :release do
+    # Ensure we're on a clean state
+    ensure_git_status_clean
+
+    # Run tests first
+    test
+
+    # Build release version
+    build_release
+
+    # Upload to App Store
+    upload_to_app_store(
+      skip_metadata: false,
+      skip_screenshots: false,
+      submit_for_review: false,
+      automatic_release: false,
+      precheck_include_in_app_purchases: false
+    )
+
+    # Tag the release
+    add_git_tag(
+      tag: "v#{get_version_number(xcodeproj: 'WeDaApp/WeDaApp.xcodeproj')}"
+    )
+
+    push_git_tags
+  end
+
+  # MARK: - Setup Lanes
+
+  desc "Setup development environment"
+  lane :setup do
+    # Install dependencies
+    sh("bundle install")
+
+    # Generate Arkana keys
+    sh("bundle exec arkana")
+
+    UI.success("✅ Development environment setup complete!")
+    UI.message("Run 'bundle exec fastlane test' to run tests")
+  end
+
+  # MARK: - Error Handling
+
+  error do |lane, exception|
+    UI.error("❌ Error in lane '#{lane}': #{exception.message}")
+  end
+end

@@ -1,0 +1,100 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: macos-14
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: '15.0'
+
+    - name: Setup Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.2'
+        bundler-cache: true
+
+    - name: Install dependencies
+      run: |
+        bundle install
+        bundle exec arkana
+
+    - name: Cache Swift Package Manager
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/Library/Caches/org.swift.swiftpm
+          .build
+        key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+        restore-keys: |
+          ${{ runner.os }}-spm-
+
+    - name: Resolve SPM dependencies
+      run: |
+        xcodebuild -resolvePackageDependencies -workspace WeDaApp.xcworkspace -scheme WeDaApp
+
+    - name: Run tests
+      run: |
+        bundle exec fastlane test
+      env:
+        FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 120
+
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results
+        path: fastlane/test_output/
+
+    - name: Upload code coverage
+      if: success()
+      uses: actions/upload-artifact@v4
+      with:
+        name: code-coverage
+        path: fastlane/xcov_output/
+
+    - name: Generate coverage report
+      if: success()
+      run: |
+        brew install gcovr
+        xcrun llvm-cov export -format="lcov" \
+          -instr-profile=$(find ~/Library/Developer/Xcode/DerivedData -name "*.profdata" | head -1) \
+          $(find ~/Library/Developer/Xcode/DerivedData -name "WeDaApp" -type f | head -1) > coverage.lcov || true
+
+    - name: Upload coverage to Codecov
+      if: success()
+      uses: codecov/codecov-action@v4
+      with:
+        files: ./coverage.lcov
+        flags: unittests
+        name: WeDaApp-coverage
+        fail_ci_if_error: false
+        token: ${{ secrets.CODECOV_TOKEN }}
+
+  lint:
+    name: SwiftLint
+    runs-on: macos-14
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install SwiftLint
+      run: |
+        brew install swiftlint
+
+    - name: Run SwiftLint
+      run: |
+        swiftlint lint --reporter github-actions-logging

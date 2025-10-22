@@ -1,0 +1,22 @@
+# Appfile for WeDaApp - Weather Dashboard Application
+# For more information about the Appfile, see:
+#     https://docs.fastlane.tools/advanced/#appfile
+
+# Your Apple ID (email)
+# apple_id("your-apple-id@example.com")
+
+# App Identifier (Bundle ID)
+app_identifier("com.dollargeneral.WeDaApp")
+
+# Team ID (can be found in Apple Developer Portal)
+# team_id("YOUR_TEAM_ID")
+
+# iTunes Connect Team ID (if different from team_id)
+# itc_team_id("YOUR_ITC_TEAM_ID")
+
+# For App Store Connect API Key authentication (recommended)
+# Create the key at: https://appstoreconnect.apple.com/access/api
+# Then store it as environment variables or GitHub secrets:
+# - APP_STORE_CONNECT_API_KEY_ID
+# - APP_STORE_CONNECT_API_ISSUER_ID
+# - APP_STORE_CONNECT_API_KEY_CONTENT (base64 encoded .p8 file)

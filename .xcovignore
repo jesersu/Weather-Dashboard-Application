@@ -1,0 +1,20 @@
+# Code coverage ignore file
+# Files/folders to exclude from code coverage reports
+
+# Generated files
+- ArkanaKeys/.*
+- .*\.generated\.swift
+
+# UI Tests
+- .*UITests\.swift
+
+# Mock objects (testing infrastructure)
+- .*Mock.*\.swift
+
+# Third-party packages
+- Pods/.*
+- .*\/Packages\/.*
+
+# App delegate and scene delegate (hard to test)
+- .*AppDelegate\.swift
+- .*SceneDelegate\.swift

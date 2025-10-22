@@ -1,0 +1,136 @@
+# SwiftLint Configuration for WeDaApp
+# For all available rules, see: https://realm.github.io/SwiftLint/rule-directory.html
+
+# Paths to exclude from linting
+excluded:
+  - Pods
+  - ArkanaKeys
+  - .build
+  - DerivedData
+  - fastlane
+  - vendor
+  - "**/Generated"
+  - "**/*.generated.swift"
+
+# Paths to include for linting (if you want to be explicit)
+included:
+  - WeDaApp
+  - NetworkingKit
+  - DollarGeneralPersist
+  - DollarGeneralTemplateHelpers
+
+# Enabled rules
+opt_in_rules:
+  - array_init
+  - attributes
+  - closure_end_indentation
+  - closure_spacing
+  - collection_alignment
+  - contains_over_filter_count
+  - contains_over_filter_is_empty
+  - contains_over_first_not_nil
+  - contains_over_range_nil_comparison
+  - empty_collection_literal
+  - empty_count
+  - empty_string
+  - explicit_init
+  - extension_access_modifier
+  - fallthrough
+  - fatal_error_message
+  - file_header
+  - first_where
+  - force_unwrapping
+  - implicitly_unwrapped_optional
+  - joined_default_parameter
+  - last_where
+  - legacy_random
+  - literal_expression_end_indentation
+  - multiline_arguments
+  - multiline_function_chains
+  - multiline_literal_brackets
+  - multiline_parameters
+  - operator_usage_whitespace
+  - overridden_super_call
+  - pattern_matching_keywords
+  - prefer_self_type_over_type_of_self
+  - redundant_nil_coalescing
+  - redundant_type_annotation
+  - sorted_first_last
+  - toggle_bool
+  - trailing_closure
+  - unneeded_parentheses_in_closure_argument
+  - vertical_parameter_alignment_on_call
+  - vertical_whitespace_closing_braces
+  - vertical_whitespace_opening_braces
+  - yoda_condition
+
+# Disabled rules
+disabled_rules:
+  - todo # Allow TODO comments
+  - line_length # Can be too restrictive for SwiftUI
+
+# Rule customization
+line_length:
+  warning: 150
+  error: 200
+  ignores_comments: true
+  ignores_urls: true
+  ignores_function_declarations: true
+  ignores_interpolated_strings: true
+
+file_length:
+  warning: 500
+  error: 1000
+  ignore_comment_only_lines: true
+
+function_body_length:
+  warning: 50
+  error: 100
+
+type_body_length:
+  warning: 300
+  error: 500
+
+identifier_name:
+  min_length:
+    warning: 2
+    error: 1
+  max_length:
+    warning: 50
+    error: 60
+  excluded:
+    - id
+    - x
+    - y
+    - z
+    - dt
+
+cyclomatic_complexity:
+  warning: 15
+  error: 25
+
+nesting:
+  type_level:
+    warning: 2
+    error: 3
+  function_level:
+    warning: 3
+    error: 5
+
+# Force unwrapping should be avoided but sometimes necessary
+force_unwrapping:
+  severity: warning
+
+# File header configuration
+file_header:
+  required_pattern: |
+                    \/\/
+                    \/\/  .*\.swift
+                    \/\/  .*
+                    \/\/
+                    \/\/  Created by .*
+                    \/\/  Copyright © \d{4} Dollar General\. All rights reserved\.
+                    \/\/
+
+# Custom reporter
+reporter: "xcode"
