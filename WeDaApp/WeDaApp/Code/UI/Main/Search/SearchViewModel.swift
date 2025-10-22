@@ -8,6 +8,7 @@
 
 import Foundation
 import CoreLocation
+import Combine
 import NetworkingKit
 import DollarGeneralTemplateHelpers
 import DollarGeneralPersist
@@ -39,6 +40,7 @@ final class SearchViewModel: ObservableObject {
     // MARK: - Private Properties
 
     private var searchTask: Task<Void, Never>?
+    private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Initialization
 
@@ -49,6 +51,33 @@ final class SearchViewModel: ObservableObject {
         self.storageService = storageService
         self.locationManager = locationManager ?? LocationManager()
         loadCachedWeather()
+        setupLocationObserver()
+    }
+
+    // MARK: - Setup
+
+    /// Setup observer for location authorization changes
+    private func setupLocationObserver() {
+        // Observe authorization status changes
+        // Only observe if locationManager is the concrete LocationManager type
+        guard let manager = locationManager as? LocationManager else { return }
+
+        manager.$authorizationStatus
+            .dropFirst() // Skip initial value
+            .sink { [weak self] status in
+                guard let self = self else { return }
+
+                // When authorization is granted, fetch weather automatically
+                if status == .authorizedWhenInUse || status == .authorizedAlways {
+                    LogInfo("Location authorization granted, fetching weather")
+                    Task {
+                        await self.fetchWeatherForCurrentLocation()
+                    }
+                } else if status == .denied || status == .restricted {
+                    LogInfo("Location authorization denied or restricted")
+                }
+            }
+            .store(in: &cancellables)
     }
 
     // MARK: - Public Methods
@@ -177,28 +206,28 @@ final class SearchViewModel: ObservableObject {
         searchTask?.cancel()
     }
 
-    /// Load weather for current location if permission not yet requested
+    /// Load weather for current location based on authorization status
     func loadLocationWeatherIfNeeded() async {
-        // Don't request if already asked before
-        guard !locationManager.hasRequestedPermission() else {
-            LogInfo("Location permission already requested, skipping")
+        let status = locationManager.authorizationStatus
+
+        // If already authorized, fetch weather immediately
+        if status == .authorizedWhenInUse || status == .authorizedAlways {
+            LogInfo("Location already authorized, fetching weather")
+            await fetchWeatherForCurrentLocation()
             return
         }
 
-        LogInfo("First launch - requesting location permission")
-        locationManager.requestLocationPermission()
-        locationManager.markPermissionRequested()
-
-        // Wait a bit for authorization to complete
-        try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
-
-        // Check if permission was granted
-        if locationManager.authorizationStatus == .authorizedWhenInUse ||
-           locationManager.authorizationStatus == .authorizedAlways {
-            await fetchWeatherForCurrentLocation()
-        } else {
-            LogInfo("Location permission denied or not determined")
+        // If not determined and haven't requested yet, request permission
+        if status == .notDetermined && !locationManager.hasRequestedPermission() {
+            LogInfo("First launch - requesting location permission")
+            locationManager.requestLocationPermission()
+            locationManager.markPermissionRequested()
+            // Weather will be fetched automatically when authorization changes
+            return
         }
+
+        // If denied or restricted, do nothing
+        LogInfo("Location permission denied, restricted, or already requested but not granted")
     }
 
     /// Fetch weather for current device location
