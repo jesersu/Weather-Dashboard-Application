@@ -44,3 +44,9 @@ ArkanaKeys/ArkanaKeysInterfaces/Sources/
 
 # macOS
 .DS_Store
+
+# Local documentation files (keep local only)
+CLAUDE.md
+QUICKSTART.md
+SETUP_XCODE.md
+ARCHITECTURE_SPECIFICATION.md

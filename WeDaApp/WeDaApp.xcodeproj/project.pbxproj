@@ -161,6 +161,8 @@
 			);
 			name = WeDaAppTests;
 			packageProductDependencies = (
+				CA7D8D3F2EA8E9F000BAA874 /* Quick */,
+				CA7D8D402EA8E9F000BAA874 /* Nimble */,
 			);
 			productName = WeDaAppTests;
 			productReference = CA67A3D52EA75B80008025D2 /* WeDaAppTests.xctest */;
@@ -227,6 +229,8 @@
 				CA77CA9A2EA7615000C43B53 /* XCLocalSwiftPackageReference "../DollarGeneralPersist" */,
 				CA77CAA22EA7674400C43B53 /* XCLocalSwiftPackageReference "../ArkanaKeys/ArkanaKeysInterfaces" */,
 				CA77CAA32EA7675800C43B53 /* XCLocalSwiftPackageReference "../ArkanaKeys/ArkanaKeys" */,
+				CA7D8D3D2EA8E94100BAA874 /* XCRemoteSwiftPackageReference "Nimble" */,
+				CA7D8D3E2EA8E97300BAA874 /* XCRemoteSwiftPackageReference "Quick" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CA67A3C62EA75B7E008025D2 /* Products */;
@@ -431,10 +435,10 @@
 				DEVELOPMENT_ASSET_PATHS = "\"WeDaApp/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Allow location access to automatically show weather for your area";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Allow location access to automatically show weather for your area";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -460,10 +464,10 @@
 				DEVELOPMENT_ASSET_PATHS = "\"WeDaApp/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Allow location access to automatically show weather for your area";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Allow location access to automatically show weather for your area";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -611,6 +615,25 @@
 		};
 /* End XCLocalSwiftPackageReference section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		CA7D8D3D2EA8E94100BAA874 /* XCRemoteSwiftPackageReference "Nimble" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Quick/Nimble";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+		CA7D8D3E2EA8E97300BAA874 /* XCRemoteSwiftPackageReference "Quick" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Quick/Quick";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		CA77CA9C2EA7657000C43B53 /* NetworkingKit */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -636,6 +659,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CA77CAA32EA7675800C43B53 /* XCLocalSwiftPackageReference "../ArkanaKeys/ArkanaKeys" */;
 			productName = ArkanaKeys;
+		};
+		CA7D8D3F2EA8E9F000BAA874 /* Quick */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CA7D8D3E2EA8E97300BAA874 /* XCRemoteSwiftPackageReference "Quick" */;
+			productName = Quick;
+		};
+		CA7D8D402EA8E9F000BAA874 /* Nimble */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CA7D8D3D2EA8E94100BAA874 /* XCRemoteSwiftPackageReference "Nimble" */;
+			productName = Nimble;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

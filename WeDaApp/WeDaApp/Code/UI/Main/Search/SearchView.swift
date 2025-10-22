@@ -17,64 +17,69 @@ struct SearchView: View {
     var body: some View {
         NavigationStack {
             ZStack(alignment: .top) {
-                if viewModel.isLoadingLocation {
-                    LoadingView(message: "Getting your location...")
-                        .accessibilityIdentifier(UITestIDs.SearchView.locationLoadingView.rawValue)
-                } else if viewModel.isLoading {
-                    LoadingView(message: "Searching weather...")
-                } else if let error = viewModel.error {
-                    ErrorView(error: error) {
-                        viewModel.retry()
-                    }
-                } else if let weather = viewModel.weatherData {
-                    ScrollView {
-                        VStack(spacing: 20) {
-                            // Offline indicator
-                            if viewModel.isShowingCachedData {
-                                HStack {
-                                    Image(systemName: "wifi.slash")
-                                    Text("Showing cached data (offline)")
-                                        .font(.caption)
-                                }
-                                .foregroundColor(.orange)
-                                .padding(.horizontal)
-                                .padding(.top, 8)
-                            }
-
-                            WeatherCard(weatherData: weather)
-                                .padding()
-
-                            NavigationLink {
-                                WeatherDetailsView(city: weather.name)
-                            } label: {
-                                Label("View Detailed Forecast", systemImage: "chart.line.uptrend.xyaxis")
-                                    .font(.headline)
-                                    .foregroundColor(.white)
-                                    .frame(maxWidth: .infinity)
-                                    .padding()
-                                    .background(Color.blue)
-                                    .cornerRadius(12)
-                            }
-                            .padding(.horizontal)
+                VStack(spacing: 0) {
+                    if viewModel.isLoadingLocation {
+                        LoadingView(message: "Getting your location...")
+                            .accessibilityIdentifier(UITestIDs.SearchView.locationLoadingView.rawValue)
+                    } else if viewModel.isLoading {
+                        LoadingView(message: "Searching weather...")
+                    } else if let error = viewModel.error {
+                        ErrorView(error: error) {
+                            viewModel.retry()
                         }
-                    }
-                    .accessibilityIdentifier(UITestIDs.SearchView.resultsScrollView.rawValue)
-                } else {
-                    // Empty state
-                    VStack(spacing: 20) {
-                        Image(systemName: "cloud.sun.fill")
-                            .font(.system(size: 80))
-                            .foregroundStyle(.blue.gradient)
+                    } else if let weather = viewModel.weatherData {
+                        ScrollView {
+                            VStack(spacing: 20) {
+                                // Offline indicator
+                                if viewModel.isShowingCachedData {
+                                    HStack {
+                                        Image(systemName: "wifi.slash")
+                                        Text("Showing cached data (offline)")
+                                            .font(.caption)
+                                    }
+                                    .foregroundColor(.orange)
+                                    .padding(.horizontal)
+                                    .padding(.top, 8)
+                                }
 
-                        Text("Search Weather")
-                            .font(.title)
-                            .fontWeight(.bold)
+                                WeatherCard(weatherData: weather)
+                                    .padding()
 
-                        Text("Enter a city name to get current weather information")
-                            .font(.body)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal)
+                                NavigationLink {
+                                    WeatherDetailsView(city: weather.name)
+                                } label: {
+                                    Label("View Detailed Forecast", systemImage: "chart.line.uptrend.xyaxis")
+                                        .font(.headline)
+                                        .foregroundColor(.white)
+                                        .frame(maxWidth: .infinity)
+                                        .padding()
+                                        .background(Color.blue)
+                                        .cornerRadius(12)
+                                }
+                                .padding(.horizontal)
+                            }
+                            .padding(.top, 8)
+                        }
+                        .accessibilityIdentifier(UITestIDs.SearchView.resultsScrollView.rawValue)
+                    } else {
+                        // Empty state
+                        Spacer()
+                        VStack(spacing: 20) {
+                            Image(systemName: "cloud.sun.fill")
+                                .font(.system(size: 80))
+                                .foregroundStyle(.blue.gradient)
+
+                            Text("Search Weather")
+                                .font(.title)
+                                .fontWeight(.bold)
+
+                            Text("Enter a city name to get current weather information")
+                                .font(.body)
+                                .foregroundColor(.secondary)
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal)
+                        }
+                        Spacer()
                     }
                 }
 
@@ -82,7 +87,7 @@ struct SearchView: View {
                 if viewModel.showSuggestions && !viewModel.citySuggestions.isEmpty {
                     VStack {
                         Spacer()
-                            .frame(height: 60) // Space for navigation bar and search field
+                            .frame(height: 8)
 
                         ScrollView {
                             VStack(alignment: .leading, spacing: 0) {
