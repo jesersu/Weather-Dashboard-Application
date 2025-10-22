@@ -25,6 +25,13 @@ struct MainTabView: View {
                 .tabItem {
                     Label("History", systemImage: "clock.fill")
                 }
+
+            NavigationStack {
+                WeatherMapView()
+            }
+            .tabItem {
+                Label("Map", systemImage: "map.fill")
+            }
         }
     }
 }
