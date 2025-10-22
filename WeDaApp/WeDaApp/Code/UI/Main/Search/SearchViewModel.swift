@@ -41,6 +41,7 @@ final class SearchViewModel: ObservableObject {
 
     private var searchTask: Task<Void, Never>?
     private var cancellables = Set<AnyCancellable>()
+    private var isProgrammaticUpdate = false
 
     // MARK: - Initialization
 
@@ -138,6 +139,7 @@ final class SearchViewModel: ObservableObject {
     func clearSearch() {
         weatherData = nil
         error = nil
+        isProgrammaticUpdate = true
         searchText = ""
         isShowingCachedData = false
         hideSuggestions()
@@ -152,6 +154,12 @@ final class SearchViewModel: ObservableObject {
 
     /// Search for city suggestions with debouncing (300ms delay)
     func searchCities(query: String) {
+        // Skip autocomplete if text was set programmatically (location load or suggestion selection)
+        if isProgrammaticUpdate {
+            isProgrammaticUpdate = false // Reset flag
+            return
+        }
+
         // Cancel previous search task
         searchTask?.cancel()
 
@@ -190,6 +198,7 @@ final class SearchViewModel: ObservableObject {
         LogInfo("Selected city: \(result.displayName)")
 
         // Update search text and hide suggestions
+        isProgrammaticUpdate = true
         searchText = result.name
         hideSuggestions()
 
@@ -248,6 +257,7 @@ final class SearchViewModel: ObservableObject {
             )
 
             weatherData = weather
+            isProgrammaticUpdate = true
             searchText = weather.name
             hideSuggestions() // Prevent autocomplete from showing when text is set programmatically
 
