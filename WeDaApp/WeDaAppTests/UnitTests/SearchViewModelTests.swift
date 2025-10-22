@@ -206,7 +206,14 @@ class MockWeatherService: WeatherServiceProtocol {
     var errorToThrow: APIError = .unknownError
     var delay: TimeInterval = 0
 
+    // Call tracking for background fetch tests
+    var fetchWeatherCallCount = 0
+    var fetchWeatherByCoordinatesCallCount = 0
+    var weatherDataToReturn: WeatherData?
+
     func fetchCurrentWeather(city: String) async throws -> WeatherData {
+        fetchWeatherCallCount += 1
+
         if delay > 0 {
             try await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
         }
@@ -215,7 +222,7 @@ class MockWeatherService: WeatherServiceProtocol {
             throw errorToThrow
         }
 
-        guard let result = weatherResult else {
+        guard let result = weatherDataToReturn ?? weatherResult else {
             throw APIError.unknownError
         }
 
@@ -235,11 +242,13 @@ class MockWeatherService: WeatherServiceProtocol {
     }
 
     func fetchWeatherByCoordinates(lat: Double, lon: Double) async throws -> WeatherData {
+        fetchWeatherByCoordinatesCallCount += 1
+
         if shouldThrowError {
             throw errorToThrow
         }
 
-        guard let result = weatherResult else {
+        guard let result = weatherDataToReturn ?? weatherResult else {
             throw APIError.unknownError
         }
 
