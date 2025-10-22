@@ -9,6 +9,7 @@
 import XCTest
 import CoreLocation
 import NetworkingKit
+import DollarGeneralPersist
 @testable import WeDaApp
 
 @MainActor
@@ -21,6 +22,11 @@ final class SearchViewModelTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
+
+        // Clear any cached weather data to ensure clean test state
+        DollarGeneralPersist.removeCache(key: KeysCache.cachedWeatherData)
+        DollarGeneralPersist.removeCache(key: KeysCache.lastWeatherUpdate)
+
         mockWeatherService = MockWeatherService()
         mockStorageService = MockLocalStorageService()
         mockLocationManager = MockLocationManager()

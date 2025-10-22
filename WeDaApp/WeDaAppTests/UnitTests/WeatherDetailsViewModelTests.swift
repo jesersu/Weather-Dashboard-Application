@@ -120,7 +120,7 @@ final class WeatherDetailsViewModelTests: XCTestCase {
         XCTAssertTrue(viewModel.isFavorite)
     }
 
-    func test_toggleFavorite_removeFromFavorites() throws {
+    func test_toggleFavorite_removeFromFavorites() async throws {
         // Given
         let mockWeather = createMockWeatherData()
         mockWeatherService.weatherResult = mockWeather
@@ -139,6 +139,11 @@ final class WeatherDetailsViewModelTests: XCTestCase {
             weatherService: mockWeatherService,
             storageService: mockStorageService
         )
+        await viewModel.fetchWeatherData()
+        viewModel.checkIfFavorite()
+
+        // Verify it's a favorite before toggling
+        XCTAssertTrue(viewModel.isFavorite)
 
         // When
         viewModel.toggleFavorite()
