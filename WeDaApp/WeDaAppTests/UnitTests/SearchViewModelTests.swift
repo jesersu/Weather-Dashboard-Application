@@ -7,6 +7,7 @@
 //
 
 import XCTest
+import CoreLocation
 import NetworkingKit
 @testable import WeDaApp
 
@@ -15,21 +16,25 @@ final class SearchViewModelTests: XCTestCase {
 
     var mockWeatherService: MockWeatherService!
     var mockStorageService: MockLocalStorageService!
+    var mockLocationManager: MockLocationManager!
     var viewModel: SearchViewModel!
 
     override func setUp() {
         super.setUp()
         mockWeatherService = MockWeatherService()
         mockStorageService = MockLocalStorageService()
+        mockLocationManager = MockLocationManager()
         viewModel = SearchViewModel(
             weatherService: mockWeatherService,
-            storageService: mockStorageService
+            storageService: mockStorageService,
+            locationManager: mockLocationManager
         )
     }
 
     override func tearDown() {
         mockWeatherService = nil
         mockStorageService = nil
+        mockLocationManager = nil
         viewModel = nil
         super.tearDown()
     }
@@ -138,10 +143,14 @@ final class SearchViewModelTests: XCTestCase {
 
     // MARK: - Clear Tests
 
-    func test_clearSearch() {
+    func test_clearSearch() async {
         // Given
-        viewModel.weatherData = createMockWeatherData()
-        viewModel.error = .invalidCity
+        let mockWeather = createMockWeatherData()
+        mockWeatherService.weatherResult = mockWeather
+        await viewModel.search(city: "London")
+
+        // Verify we have data before clearing
+        XCTAssertNotNil(viewModel.weatherData)
 
         // When
         viewModel.clearSearch()
@@ -149,6 +158,7 @@ final class SearchViewModelTests: XCTestCase {
         // Then
         XCTAssertNil(viewModel.weatherData)
         XCTAssertNil(viewModel.error)
+        XCTAssertEqual(viewModel.searchText, "")
     }
 
     // MARK: - Helper Methods
@@ -182,8 +192,10 @@ final class SearchViewModelTests: XCTestCase {
 // MARK: - Mock Services
 
 class MockWeatherService: WeatherServiceProtocol {
+
     var weatherResult: WeatherData?
     var forecastResult: ForecastResponse?
+    var citiesResult: [GeocodeResult] = []
     var shouldThrowError = false
     var errorToThrow: APIError = .unknownError
     var delay: TimeInterval = 0
@@ -227,6 +239,14 @@ class MockWeatherService: WeatherServiceProtocol {
 
         return result
     }
+
+    func searchCities(query: String, limit: Int) async throws -> [GeocodeResult] {
+        if shouldThrowError {
+            throw errorToThrow
+        }
+
+        return citiesResult
+    }
 }
 
 class MockLocalStorageService: LocalStorageServiceProtocol {
@@ -265,5 +285,39 @@ class MockLocalStorageService: LocalStorageServiceProtocol {
 
     func clearHistory() throws {
         history.removeAll()
+    }
+}
+
+class MockLocationManager: LocationManagerProtocol {
+    var authorizationStatus: CLAuthorizationStatus = .notDetermined
+    var currentLocation: CLLocation?
+    var locationError: LocationError?
+    var shouldThrowError = false
+    var errorToThrow: LocationError = .unavailable
+
+    private var permissionRequested = false
+
+    func requestLocationPermission() {
+        // Mock implementation - doesn't actually request permission
+    }
+
+    func getCurrentLocation() async throws -> CLLocation {
+        if shouldThrowError {
+            throw errorToThrow
+        }
+
+        guard let location = currentLocation else {
+            throw LocationError.unavailable
+        }
+
+        return location
+    }
+
+    func hasRequestedPermission() -> Bool {
+        return permissionRequested
+    }
+
+    func markPermissionRequested() {
+        permissionRequested = true
     }
 }
