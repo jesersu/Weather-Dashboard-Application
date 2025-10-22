@@ -71,7 +71,7 @@ The project is organized into **4 local Swift packages**:
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/jesersu/Weather-Dashboard-Application.git
    cd WeatherDashboardApp
    ```
 
