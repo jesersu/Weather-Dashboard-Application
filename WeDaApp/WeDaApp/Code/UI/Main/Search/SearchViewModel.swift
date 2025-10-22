@@ -211,7 +211,8 @@ final class SearchViewModel: ObservableObject {
             LogInfo("Fetching current location")
             let location = try await locationManager.getCurrentLocation()
 
-            LogInfo("Fetching weather for coordinates: \(location.coordinate.latitude), \(location.coordinate.longitude)")
+            // OWASP MSTG-STORAGE-1: Never log GPS coordinates (sensitive PII)
+            LogInfo("Fetching weather for current location")
             let weather = try await weatherService.fetchWeatherByCoordinates(
                 lat: location.coordinate.latitude,
                 lon: location.coordinate.longitude

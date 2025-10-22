@@ -46,6 +46,13 @@ public protocol LocationManagerProtocol: AnyObject {
 }
 
 /// Manager for handling device location services
+///
+/// **OWASP MSTG-STORAGE-1 Compliance:**
+/// This class handles sensitive PII (GPS coordinates). Never log:
+/// - Latitude/longitude coordinates
+/// - Precise location data
+/// - User's physical address
+/// Only log authorization states and general success/failure messages.
 @MainActor
 public class LocationManager: NSObject, LocationManagerProtocol, ObservableObject {
 
@@ -157,7 +164,8 @@ extension LocationManager: CLLocationManagerDelegate {
             return
         }
 
-        LogInfo("Location updated: \(location.coordinate.latitude), \(location.coordinate.longitude)")
+        // OWASP MSTG-STORAGE-1: Never log sensitive PII (GPS coordinates)
+        LogInfo("Location updated successfully")
 
         currentLocation = location
         locationError = nil
