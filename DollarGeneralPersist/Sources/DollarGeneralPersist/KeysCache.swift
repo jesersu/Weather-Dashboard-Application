@@ -22,4 +22,7 @@ public struct KeysCache {
     // Settings
     public static let temperatureUnit = "temperatureUnit"
     public static let isFirstLaunch = "isFirstLaunch"
+
+    // Location
+    public static let locationPermissionRequested = "locationPermissionRequested"
 }

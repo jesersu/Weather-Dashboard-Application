@@ -17,7 +17,10 @@ struct SearchView: View {
     var body: some View {
         NavigationStack {
             ZStack(alignment: .top) {
-                if viewModel.isLoading {
+                if viewModel.isLoadingLocation {
+                    LoadingView(message: "Getting your location...")
+                        .accessibilityIdentifier(UITestIDs.SearchView.locationLoadingView.rawValue)
+                } else if viewModel.isLoading {
                     LoadingView(message: "Searching weather...")
                 } else if let error = viewModel.error {
                     ErrorView(error: error) {
@@ -149,6 +152,9 @@ struct SearchView: View {
                             .foregroundColor(.secondary)
                     }
                 }
+            }
+            .task {
+                await viewModel.loadLocationWeatherIfNeeded()
             }
         }
     }

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreLocation
 import NetworkingKit
 import DollarGeneralTemplateHelpers
 import DollarGeneralPersist
@@ -26,10 +27,14 @@ final class SearchViewModel: ObservableObject {
     @Published private(set) var citySuggestions: [GeocodeResult] = []
     @Published private(set) var showSuggestions = false
 
+    // Location properties
+    @Published private(set) var isLoadingLocation = false
+
     // MARK: - Dependencies
 
     private let weatherService: WeatherServiceProtocol
     private let storageService: LocalStorageServiceProtocol
+    private let locationManager: LocationManagerProtocol
 
     // MARK: - Private Properties
 
@@ -38,9 +43,11 @@ final class SearchViewModel: ObservableObject {
     // MARK: - Initialization
 
     init(weatherService: WeatherServiceProtocol = WeatherService(),
-         storageService: LocalStorageServiceProtocol = LocalStorageService()) {
+         storageService: LocalStorageServiceProtocol = LocalStorageService(),
+         locationManager: LocationManagerProtocol? = nil) {
         self.weatherService = weatherService
         self.storageService = storageService
+        self.locationManager = locationManager ?? LocationManager()
         loadCachedWeather()
     }
 
@@ -168,6 +175,74 @@ final class SearchViewModel: ObservableObject {
         showSuggestions = false
         citySuggestions = []
         searchTask?.cancel()
+    }
+
+    /// Load weather for current location if permission not yet requested
+    func loadLocationWeatherIfNeeded() async {
+        // Don't request if already asked before
+        guard !locationManager.hasRequestedPermission() else {
+            LogInfo("Location permission already requested, skipping")
+            return
+        }
+
+        LogInfo("First launch - requesting location permission")
+        locationManager.requestLocationPermission()
+        locationManager.markPermissionRequested()
+
+        // Wait a bit for authorization to complete
+        try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+
+        // Check if permission was granted
+        if locationManager.authorizationStatus == .authorizedWhenInUse ||
+           locationManager.authorizationStatus == .authorizedAlways {
+            await fetchWeatherForCurrentLocation()
+        } else {
+            LogInfo("Location permission denied or not determined")
+        }
+    }
+
+    /// Fetch weather for current device location
+    func fetchWeatherForCurrentLocation() async {
+        isLoadingLocation = true
+        error = nil
+        isShowingCachedData = false
+
+        do {
+            LogInfo("Fetching current location")
+            let location = try await locationManager.getCurrentLocation()
+
+            LogInfo("Fetching weather for coordinates: \(location.coordinate.latitude), \(location.coordinate.longitude)")
+            let weather = try await weatherService.fetchWeatherByCoordinates(
+                lat: location.coordinate.latitude,
+                lon: location.coordinate.longitude
+            )
+
+            weatherData = weather
+            searchText = weather.name
+
+            // Cache weather data for offline use
+            cacheWeather(weather)
+
+            // Add to search history
+            let historyItem = SearchHistoryItem(
+                cityName: weather.name,
+                country: weather.sys.country
+            )
+            try? storageService.addToHistory(historyItem)
+
+            LogInfo("Successfully fetched weather for current location: \(weather.name)")
+
+        } catch let locationError as LocationError {
+            LogError("Location error: \(locationError.message)")
+            // Don't show error for location failures - just stay on empty state
+        } catch let apiError as APIError {
+            LogError("Weather API error: \(apiError.message)")
+            error = apiError
+        } catch {
+            LogError("Unknown error fetching location weather: \(error)")
+        }
+
+        isLoadingLocation = false
     }
 
     // MARK: - Private Methods
