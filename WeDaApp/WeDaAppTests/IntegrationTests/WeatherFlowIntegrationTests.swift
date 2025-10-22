@@ -7,6 +7,8 @@
 //
 
 import XCTest
+import CoreLocation
+import DollarGeneralPersist
 @testable import WeDaApp
 
 @MainActor
@@ -14,16 +16,23 @@ final class WeatherFlowIntegrationTests: XCTestCase {
 
     var mockWeatherService: MockWeatherService!
     var mockStorageService: MockLocalStorageService!
+    var mockLocationManager: MockLocationManager!
 
     override func setUp() {
         super.setUp()
         mockWeatherService = MockWeatherService()
         mockStorageService = MockLocalStorageService()
+        mockLocationManager = MockLocationManager()
+
+        // Clear any cached weather data to ensure clean test state
+        DollarGeneralPersist.removeCache(key: KeysCache.cachedWeatherData)
+        DollarGeneralPersist.removeCache(key: KeysCache.lastWeatherUpdate)
     }
 
     override func tearDown() {
         mockWeatherService = nil
         mockStorageService = nil
+        mockLocationManager = nil
         super.tearDown()
     }
 
@@ -33,7 +42,8 @@ final class WeatherFlowIntegrationTests: XCTestCase {
         // Given - User searches for a city
         let searchViewModel = SearchViewModel(
             weatherService: mockWeatherService,
-            storageService: mockStorageService
+            storageService: mockStorageService,
+            locationManager: mockLocationManager
         )
 
         let mockWeather = createMockWeatherData(cityName: "London")
@@ -101,7 +111,8 @@ final class WeatherFlowIntegrationTests: XCTestCase {
         // Given - User performs multiple searches
         let searchViewModel = SearchViewModel(
             weatherService: mockWeatherService,
-            storageService: mockStorageService
+            storageService: mockStorageService,
+            locationManager: mockLocationManager
         )
 
         let cities = ["London", "Paris", "Tokyo"]
@@ -158,7 +169,8 @@ final class WeatherFlowIntegrationTests: XCTestCase {
 
         let searchViewModel = SearchViewModel(
             weatherService: mockWeatherService,
-            storageService: mockStorageService
+            storageService: mockStorageService,
+            locationManager: mockLocationManager
         )
 
         // When - First search fails
