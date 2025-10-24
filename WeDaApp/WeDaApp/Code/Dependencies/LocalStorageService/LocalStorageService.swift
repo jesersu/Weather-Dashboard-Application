@@ -22,149 +22,100 @@ public protocol LocalStorageServiceProtocol {
     func clearHistory() throws
 }
 
-/// Service for managing local data persistence (favorites and search history)
+/// Service for managing local data persistence using SwiftData
+/// Delegates to SwiftDataManager for all storage operations
 public class LocalStorageService: LocalStorageServiceProtocol {
 
-    private let favoritesKey: String
-    private let historyKey: String
-    private let maxHistoryItems = 20
+    private let swiftDataManager: SwiftDataManagerProtocol
 
-    public init(favoritesKey: String = KeysCache.favoriteCities,
-                historyKey: String = KeysCache.searchHistory) {
-        self.favoritesKey = favoritesKey
-        self.historyKey = historyKey
+    /// Shared instance using persistent storage (lazy initialized on first access)
+    public static let shared: LocalStorageService = {
+        do {
+            let container = try SwiftDataManager.createPersistentContainer()
+            let manager = SwiftDataManager(modelContainer: container)
+            return LocalStorageService(swiftDataManager: manager)
+        } catch {
+            fatalError("Failed to create LocalStorageService: \(error)")
+        }
+    }()
+
+    /// Initialize with SwiftDataManager (injected for testability)
+    /// - Parameter swiftDataManager: The SwiftData manager to use
+    public init(swiftDataManager: SwiftDataManagerProtocol) {
+        self.swiftDataManager = swiftDataManager
+    }
+
+    /// Convenience initializer that uses the shared instance's SwiftDataManager
+    public convenience init() {
+        self.init(swiftDataManager: LocalStorageService.shared.swiftDataManager)
     }
 
     // MARK: - Favorites
 
     /// Save a city to favorites
     /// - Parameter favorite: FavoriteCity to save
-    /// - Throws: Encoding/Decoding errors
+    /// - Throws: SwiftData errors
+    @MainActor
     public func saveFavorite(_ favorite: FavoriteCity) throws {
-        var favorites = try getFavorites()
-
-        // Prevent duplicates - check by city name (case-insensitive)
-        if favorites.contains(where: { $0.cityName.lowercased() == favorite.cityName.lowercased() }) {
-            return
-        }
-
-        favorites.append(favorite)
-
-        let data = try JSONEncoder().encode(favorites)
-        guard let jsonString = String(data: data, encoding: .utf8) else {
-            throw LocalStorageError.encodingFailed
-        }
-
-        DollarGeneralPersist.saveCache(key: favoritesKey, value: jsonString)
+        try swiftDataManager.saveFavorite(favorite)
     }
 
     /// Remove a favorite city by ID
     /// - Parameter id: Favorite city ID
-    /// - Throws: Encoding/Decoding errors
+    /// - Throws: SwiftData errors
+    @MainActor
     public func removeFavorite(id: String) throws {
-        var favorites = try getFavorites()
-        favorites.removeAll { $0.id == id }
-
-        let data = try JSONEncoder().encode(favorites)
-        guard let jsonString = String(data: data, encoding: .utf8) else {
-            throw LocalStorageError.encodingFailed
-        }
-
-        DollarGeneralPersist.saveCache(key: favoritesKey, value: jsonString)
+        try swiftDataManager.removeFavorite(id: id)
     }
 
     /// Get all favorite cities
     /// - Returns: Array of favorite cities, sorted by most recently added
-    /// - Throws: Decoding errors
+    /// - Throws: SwiftData errors
+    @MainActor
     public func getFavorites() throws -> [FavoriteCity] {
-        let jsonString = DollarGeneralPersist.getCacheData(key: favoritesKey)
-
-        guard !jsonString.isEmpty,
-              let data = jsonString.data(using: .utf8) else {
-            return []
-        }
-
-        do {
-            let favorites = try JSONDecoder().decode([FavoriteCity].self, from: data)
-            return favorites.sorted { $0.addedAt > $1.addedAt }
-        } catch {
-            // If decoding fails, return empty array (corrupted data)
-            return []
-        }
+        return try swiftDataManager.getFavorites()
     }
 
     /// Check if a city is in favorites
     /// - Parameter cityName: City name to check
     /// - Returns: true if city is in favorites
-    /// - Throws: Decoding errors
+    /// - Throws: SwiftData errors
+    @MainActor
     public func isFavorite(cityName: String) throws -> Bool {
-        let favorites = try getFavorites()
-        return favorites.contains { $0.cityName.lowercased() == cityName.lowercased() }
+        return try swiftDataManager.isFavorite(cityName: cityName)
     }
 
     // MARK: - Search History
 
     /// Add a search to history
     /// - Parameter item: SearchHistoryItem to add
-    /// - Throws: Encoding/Decoding errors
+    /// - Throws: SwiftData errors
+    @MainActor
     public func addToHistory(_ item: SearchHistoryItem) throws {
-        var history = try getHistory()
-
-        // Add new item to beginning (most recent first)
-        history.insert(item, at: 0)
-
-        // Limit to max items
-        if history.count > maxHistoryItems {
-            history = Array(history.prefix(maxHistoryItems))
-        }
-
-        let data = try JSONEncoder().encode(history)
-        guard let jsonString = String(data: data, encoding: .utf8) else {
-            throw LocalStorageError.encodingFailed
-        }
-
-        DollarGeneralPersist.saveCache(key: historyKey, value: jsonString)
+        try swiftDataManager.addToHistory(item)
     }
 
     /// Get search history
     /// - Returns: Array of search history items, sorted by most recent
-    /// - Throws: Decoding errors
+    /// - Throws: SwiftData errors
+    @MainActor
     public func getHistory() throws -> [SearchHistoryItem] {
-        let jsonString = DollarGeneralPersist.getCacheData(key: historyKey)
-
-        guard !jsonString.isEmpty,
-              let data = jsonString.data(using: .utf8) else {
-            return []
-        }
-
-        do {
-            let history = try JSONDecoder().decode([SearchHistoryItem].self, from: data)
-            return history // Already sorted by most recent
-        } catch {
-            // If decoding fails, return empty array (corrupted data)
-            return []
-        }
+        return try swiftDataManager.getHistory()
     }
 
     /// Remove a history item by ID
     /// - Parameter id: History item ID
-    /// - Throws: Encoding/Decoding errors
+    /// - Throws: SwiftData errors
+    @MainActor
     public func removeHistoryItem(id: String) throws {
-        var history = try getHistory()
-        history.removeAll { $0.id == id }
-
-        let data = try JSONEncoder().encode(history)
-        guard let jsonString = String(data: data, encoding: .utf8) else {
-            throw LocalStorageError.encodingFailed
-        }
-
-        DollarGeneralPersist.saveCache(key: historyKey, value: jsonString)
+        try swiftDataManager.removeHistoryItem(id: id)
     }
 
     /// Clear all search history
-    /// - Throws: Encoding errors
+    /// - Throws: SwiftData errors
+    @MainActor
     public func clearHistory() throws {
-        DollarGeneralPersist.removeCache(key: historyKey)
+        try swiftDataManager.clearHistory()
     }
 }
 

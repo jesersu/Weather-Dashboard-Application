@@ -6,7 +6,8 @@ import PackageDescription
 let package = Package(
     name: "DollarGeneralPersist",
     platforms: [
-        .iOS(.v15)
+        .iOS(.v17),
+        .macOS(.v14)
     ],
     products: [
         .library(
