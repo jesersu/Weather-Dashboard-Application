@@ -18,6 +18,7 @@ public protocol LocalStorageServiceProtocol {
 
     func addToHistory(_ item: SearchHistoryItem) throws
     func getHistory() throws -> [SearchHistoryItem]
+    func removeHistoryItem(id: String) throws
     func clearHistory() throws
 }
 
@@ -143,6 +144,21 @@ public class LocalStorageService: LocalStorageServiceProtocol {
             // If decoding fails, return empty array (corrupted data)
             return []
         }
+    }
+
+    /// Remove a history item by ID
+    /// - Parameter id: History item ID
+    /// - Throws: Encoding/Decoding errors
+    public func removeHistoryItem(id: String) throws {
+        var history = try getHistory()
+        history.removeAll { $0.id == id }
+
+        let data = try JSONEncoder().encode(history)
+        guard let jsonString = String(data: data, encoding: .utf8) else {
+            throw LocalStorageError.encodingFailed
+        }
+
+        DollarGeneralPersist.saveCache(key: historyKey, value: jsonString)
     }
 
     /// Clear all search history

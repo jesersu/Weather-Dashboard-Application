@@ -33,19 +33,26 @@ struct HistoryView: View {
                             .padding(.horizontal)
                     }
                 } else {
-                    ScrollView {
-                        LazyVStack(spacing: 12) {
-                            ForEach(viewModel.history) { item in
-                                NavigationLink {
-                                    WeatherDetailsView(city: item.cityName)
-                                } label: {
-                                    HistoryItemView(item: item)
-                                }
-                                .accessibilityIdentifier(UITestIDs.HistoryView.historyItem.rawValue)
+                    List {
+                        ForEach(viewModel.history) { item in
+                            NavigationLink {
+                                WeatherDetailsView(city: item.cityName)
+                            } label: {
+                                HistoryItemView(item: item)
+                            }
+                            .listRowBackground(Color.clear)
+                            .listRowSeparator(.hidden)
+                            .accessibilityIdentifier(UITestIDs.HistoryView.historyItem.rawValue)
+                        }
+                        .onDelete { indexSet in
+                            indexSet.forEach { index in
+                                let item = viewModel.history[index]
+                                viewModel.deleteHistoryItem(id: item.id)
                             }
                         }
-                        .padding()
                     }
+                    .listStyle(.plain)
+                    .scrollContentBackground(.hidden)
                     .accessibilityIdentifier(UITestIDs.HistoryView.scrollView.rawValue)
                 }
             }

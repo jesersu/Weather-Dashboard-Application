@@ -31,6 +31,16 @@ final class HistoryViewModel: ObservableObject {
         }
     }
 
+    func deleteHistoryItem(id: String) {
+        do {
+            try storageService.removeHistoryItem(id: id)
+            loadHistory()
+            LogInfo("Deleted history item: \(id)")
+        } catch {
+            LogError("Failed to delete history item: \(error)")
+        }
+    }
+
     func clearHistory() {
         do {
             try storageService.clearHistory()
