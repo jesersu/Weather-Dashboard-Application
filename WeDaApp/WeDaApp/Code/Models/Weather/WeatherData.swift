@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import DollarGeneralPersist
 
 /// Main weather data response from OpenWeatherMap API
 public struct WeatherData: Codable, Identifiable, Hashable {
@@ -34,16 +35,6 @@ public struct WeatherData: Codable, Identifiable, Hashable {
         self.sys = sys
         self.timezone = timezone
         self.visibility = visibility
-    }
-}
-
-public struct Coordinates: Codable, Hashable {
-    public let lon: Double
-    public let lat: Double
-
-    public init(lon: Double, lat: Double) {
-        self.lon = lon
-        self.lat = lat
     }
 }
 

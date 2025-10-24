@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import DollarGeneralPersist
 import DollarGeneralTemplateHelpers
 
 struct FavoritesView: View {

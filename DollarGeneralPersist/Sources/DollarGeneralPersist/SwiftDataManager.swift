@@ -194,7 +194,7 @@ extension SwiftDataManager {
     /// Create a persistent ModelContainer for production use
     /// - Returns: ModelContainer configured for persistent storage
     /// - Throws: Configuration errors
-    public static func createPersistentContainer() throws -> ModelContainer {
+    nonisolated public static func createPersistentContainer() throws -> ModelContainer {
         let schema = Schema([
             FavoriteCityModel.self,
             SearchHistoryModel.self
@@ -214,7 +214,7 @@ extension SwiftDataManager {
     /// Create an in-memory ModelContainer for testing
     /// - Returns: ModelContainer configured for in-memory storage
     /// - Throws: Configuration errors
-    public static func createInMemoryContainer() throws -> ModelContainer {
+    nonisolated public static func createInMemoryContainer() throws -> ModelContainer {
         let schema = Schema([
             FavoriteCityModel.self,
             SearchHistoryModel.self

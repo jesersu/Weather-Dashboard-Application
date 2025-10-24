@@ -8,6 +8,7 @@
 
 import Foundation
 import NetworkingKit
+import DollarGeneralPersist
 import DollarGeneralTemplateHelpers
 import UIKit
 

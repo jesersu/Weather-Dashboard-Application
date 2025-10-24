@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import DollarGeneralPersist
 import DollarGeneralTemplateHelpers
 
 struct HistoryView: View {

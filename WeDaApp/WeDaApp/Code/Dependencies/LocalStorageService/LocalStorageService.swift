@@ -32,8 +32,10 @@ public class LocalStorageService: LocalStorageServiceProtocol {
     public static let shared: LocalStorageService = {
         do {
             let container = try SwiftDataManager.createPersistentContainer()
-            let manager = SwiftDataManager(modelContainer: container)
-            return LocalStorageService(swiftDataManager: manager)
+            return MainActor.assumeIsolated {
+                let manager = SwiftDataManager(modelContainer: container)
+                return LocalStorageService(swiftDataManager: manager)
+            }
         } catch {
             fatalError("Failed to create LocalStorageService: \(error)")
         }

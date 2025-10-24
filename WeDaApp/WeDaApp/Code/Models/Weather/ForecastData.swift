@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import DollarGeneralPersist
 
 /// 5-day weather forecast response from OpenWeatherMap API
 public struct ForecastResponse: Codable {

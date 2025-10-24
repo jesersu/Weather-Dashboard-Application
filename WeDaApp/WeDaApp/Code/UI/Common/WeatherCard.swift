@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import DollarGeneralPersist
 
 /// Reusable weather information display card
 public struct WeatherCard: View {
