@@ -13,24 +13,24 @@ struct MainTabView: View {
         TabView {
             SearchView()
                 .tabItem {
-                    Label("Search", systemImage: "magnifyingglass")
+                    Label(L10n.Tab.search, systemImage: "magnifyingglass")
                 }
 
             FavoritesView()
                 .tabItem {
-                    Label("Favorites", systemImage: "star.fill")
+                    Label(L10n.Tab.favorites, systemImage: "star.fill")
                 }
 
             HistoryView()
                 .tabItem {
-                    Label("History", systemImage: "clock.fill")
+                    Label(L10n.Tab.history, systemImage: "clock.fill")
                 }
 
             NavigationStack {
                 WeatherMapView()
             }
             .tabItem {
-                Label("Map", systemImage: "map.fill")
+                Label(L10n.Tab.map, systemImage: "map.fill")
             }
         }
     }

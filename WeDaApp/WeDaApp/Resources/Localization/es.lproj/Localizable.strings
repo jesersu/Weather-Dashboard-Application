@@ -1,0 +1,125 @@
+/*
+  Localizable.strings - Spanish
+  WeDaApp
+
+  Copyright © 2025 Dollar General. All rights reserved.
+*/
+
+// MARK: - Common
+"common.ok" = "Aceptar";
+"common.cancel" = "Cancelar";
+"common.retry" = "Reintentar";
+"common.close" = "Cerrar";
+"common.done" = "Listo";
+"common.loading" = "Cargando...";
+"common.error" = "Error";
+"common.search" = "Buscar";
+
+// MARK: - Tab Bar
+"tab.search" = "Buscar";
+"tab.favorites" = "Favoritos";
+"tab.history" = "Historial";
+"tab.map" = "Mapa";
+
+// MARK: - Search View
+"search.title" = "Buscar";
+"search.placeholder" = "Ingrese nombre de ciudad";
+"search.getting_location" = "Obteniendo tu ubicación...";
+"search.searching_weather" = "Buscando clima...";
+"search.cached_data" = "Mostrando datos en caché (sin conexión)";
+"search.empty_title" = "Buscar Clima";
+"search.empty_subtitle" = "Ingrese el nombre de una ciudad para obtener información del clima actual";
+"search.view_details" = "Ver Pronóstico Detallado";
+
+// MARK: - Weather Details View
+"weather_details.title" = "Detalles del Clima";
+"weather_details.current_weather" = "Clima Actual";
+"weather_details.five_day_forecast" = "Pronóstico de 5 Días";
+"weather_details.loading" = "Cargando detalles del clima...";
+"weather_details.hourly_forecast" = "Pronóstico por Hora";
+
+// MARK: - Favorites View
+"favorites.title" = "Favoritos";
+"favorites.empty_title" = "Sin Favoritos Aún";
+"favorites.empty_subtitle" = "Agregue ciudades a sus favoritos para consultar rápidamente su clima";
+"favorites.added_at" = "Agregado";
+"favorites.remove" = "Eliminar";
+"favorites.add_success" = "Agregado a favoritos";
+"favorites.remove_success" = "Eliminado de favoritos";
+"favorites.already_exists" = "Ya está en favoritos";
+
+// MARK: - History View
+"history.title" = "Historial de Búsqueda";
+"history.empty_title" = "Sin Historial de Búsqueda";
+"history.empty_subtitle" = "Tus búsquedas recientes aparecerán aquí";
+"history.searched_at" = "Buscado";
+"history.clear_all" = "Limpiar Todo";
+"history.clear_confirm" = "¿Estás seguro de que deseas borrar todo el historial de búsqueda?";
+
+// MARK: - Map View
+"map.title" = "Mapa del Clima";
+"map.loading" = "Cargando mapa...";
+"map.overlay.temperature" = "Temperatura";
+"map.overlay.precipitation" = "Precipitación";
+"map.overlay.clouds" = "Nubes";
+"map.no_favorites" = "No hay ciudades favoritas para mostrar en el mapa";
+"map.add_favorites" = "Agregue ciudades favoritas para verlas en el mapa";
+
+// MARK: - Weather Card
+"weather.feels_like" = "Sensación térmica";
+"weather.humidity" = "Humedad";
+"weather.wind_speed" = "Velocidad del Viento";
+"weather.pressure" = "Presión";
+"weather.visibility" = "Visibilidad";
+"weather.sunrise" = "Amanecer";
+"weather.sunset" = "Atardecer";
+"weather.clouds" = "Nubes";
+"weather.temp_min" = "Mín";
+"weather.temp_max" = "Máx";
+
+// MARK: - Error Messages
+"error.no_internet" = "Sin Conexión a Internet";
+"error.no_internet_desc" = "Por favor verifica tu conexión a internet e intenta nuevamente.";
+"error.invalid_city" = "Ciudad No Encontrada";
+"error.invalid_city_desc" = "No pudimos encontrar esa ciudad. Por favor verifica la ortografía e intenta nuevamente.";
+"error.server_error" = "Error del Servidor";
+"error.server_error_desc" = "Algo salió mal de nuestro lado. Por favor intenta más tarde.";
+"error.unknown" = "Algo Salió Mal";
+"error.unknown_desc" = "Ocurrió un error inesperado. Por favor intenta nuevamente.";
+"error.location_denied" = "Acceso a Ubicación Denegado";
+"error.location_denied_desc" = "Por favor habilita el acceso a la ubicación en Configuración para usar esta función.";
+"error.location_unavailable" = "Ubicación No Disponible";
+"error.location_unavailable_desc" = "No se puede obtener tu ubicación actual. Por favor intenta nuevamente.";
+
+// MARK: - Loading Messages
+"loading.weather" = "Cargando datos del clima...";
+"loading.forecast" = "Cargando pronóstico...";
+"loading.location" = "Obteniendo tu ubicación...";
+"loading.map" = "Cargando mapa...";
+
+// MARK: - Units
+"unit.celsius" = "°C";
+"unit.fahrenheit" = "°F";
+"unit.km" = "km";
+"unit.meters" = "m";
+"unit.kmh" = "km/h";
+"unit.mph" = "mph";
+"unit.hpa" = "hPa";
+"unit.percent" = "%";
+
+// MARK: - Time
+"time.today" = "Hoy";
+"time.tomorrow" = "Mañana";
+"time.yesterday" = "Ayer";
+"time.now" = "Ahora";
+
+// MARK: - Notifications
+"notification.daily_summary" = "Resumen Diario del Clima";
+"notification.weather_alert" = "Alerta del Clima";
+"notification.temp_drop" = "Alerta de Caída de Temperatura";
+"notification.severe_weather" = "Alerta de Clima Severo";
+
+// MARK: - Background Tasks
+"background.fetching_weather" = "Actualizando datos del clima...";
+"background.update_complete" = "Clima actualizado exitosamente";
+"background.update_failed" = "Fallo al actualizar el clima";

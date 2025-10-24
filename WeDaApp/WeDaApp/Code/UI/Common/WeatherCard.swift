@@ -56,7 +56,7 @@ public struct WeatherCard: View {
                 .font(.system(size: 64, weight: .thin))
 
             // Feels like
-            Text("Feels like \(Int(weatherData.main.feelsLike))°C")
+            Text("\(L10n.Weather.feelsLike) \(Int(weatherData.main.feelsLike))°C")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
 
@@ -70,38 +70,38 @@ public struct WeatherCard: View {
             ], spacing: 16) {
                 WeatherDetailItem(
                     icon: "thermometer.low",
-                    label: "Min",
+                    label: L10n.Weather.tempMin,
                     value: "\(Int(weatherData.main.tempMin))°C"
                 )
 
                 WeatherDetailItem(
                     icon: "thermometer.high",
-                    label: "Max",
+                    label: L10n.Weather.tempMax,
                     value: "\(Int(weatherData.main.tempMax))°C"
                 )
 
                 WeatherDetailItem(
                     icon: "humidity",
-                    label: "Humidity",
+                    label: L10n.Weather.humidity,
                     value: "\(weatherData.main.humidity)%"
                 )
 
                 WeatherDetailItem(
                     icon: "gauge",
-                    label: "Pressure",
+                    label: L10n.Weather.pressure,
                     value: "\(weatherData.main.pressure) hPa"
                 )
 
                 WeatherDetailItem(
                     icon: "wind",
-                    label: "Wind",
+                    label: L10n.Weather.windSpeed,
                     value: "\(String(format: "%.1f", weatherData.wind.speed)) m/s"
                 )
 
                 if let visibility = weatherData.visibility {
                     WeatherDetailItem(
                         icon: "eye",
-                        label: "Visibility",
+                        label: L10n.Weather.visibility,
                         value: "\(visibility / 1000) km"
                     )
                 }

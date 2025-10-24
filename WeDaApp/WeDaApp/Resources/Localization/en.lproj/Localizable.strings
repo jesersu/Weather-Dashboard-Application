@@ -1,0 +1,125 @@
+/*
+  Localizable.strings - English
+  WeDaApp
+
+  Copyright © 2025 Dollar General. All rights reserved.
+*/
+
+// MARK: - Common
+"common.ok" = "OK";
+"common.cancel" = "Cancel";
+"common.retry" = "Retry";
+"common.close" = "Close";
+"common.done" = "Done";
+"common.loading" = "Loading...";
+"common.error" = "Error";
+"common.search" = "Search";
+
+// MARK: - Tab Bar
+"tab.search" = "Search";
+"tab.favorites" = "Favorites";
+"tab.history" = "History";
+"tab.map" = "Map";
+
+// MARK: - Search View
+"search.title" = "Search";
+"search.placeholder" = "Enter city name";
+"search.getting_location" = "Getting your location...";
+"search.searching_weather" = "Searching weather...";
+"search.cached_data" = "Showing cached data (offline)";
+"search.empty_title" = "Search Weather";
+"search.empty_subtitle" = "Enter a city name to get current weather information";
+"search.view_details" = "View Detailed Forecast";
+
+// MARK: - Weather Details View
+"weather_details.title" = "Weather Details";
+"weather_details.current_weather" = "Current Weather";
+"weather_details.five_day_forecast" = "5-Day Forecast";
+"weather_details.loading" = "Loading weather details...";
+"weather_details.hourly_forecast" = "Hourly Forecast";
+
+// MARK: - Favorites View
+"favorites.title" = "Favorites";
+"favorites.empty_title" = "No Favorites Yet";
+"favorites.empty_subtitle" = "Add cities to your favorites to quickly check their weather";
+"favorites.added_at" = "Added";
+"favorites.remove" = "Remove";
+"favorites.add_success" = "Added to favorites";
+"favorites.remove_success" = "Removed from favorites";
+"favorites.already_exists" = "Already in favorites";
+
+// MARK: - History View
+"history.title" = "Search History";
+"history.empty_title" = "No Search History";
+"history.empty_subtitle" = "Your recent searches will appear here";
+"history.searched_at" = "Searched";
+"history.clear_all" = "Clear All";
+"history.clear_confirm" = "Are you sure you want to clear all search history?";
+
+// MARK: - Map View
+"map.title" = "Weather Map";
+"map.loading" = "Loading map...";
+"map.overlay.temperature" = "Temperature";
+"map.overlay.precipitation" = "Precipitation";
+"map.overlay.clouds" = "Clouds";
+"map.no_favorites" = "No favorite cities to display on map";
+"map.add_favorites" = "Add favorite cities to see them on the map";
+
+// MARK: - Weather Card
+"weather.feels_like" = "Feels like";
+"weather.humidity" = "Humidity";
+"weather.wind_speed" = "Wind Speed";
+"weather.pressure" = "Pressure";
+"weather.visibility" = "Visibility";
+"weather.sunrise" = "Sunrise";
+"weather.sunset" = "Sunset";
+"weather.clouds" = "Clouds";
+"weather.temp_min" = "Min";
+"weather.temp_max" = "Max";
+
+// MARK: - Error Messages
+"error.no_internet" = "No Internet Connection";
+"error.no_internet_desc" = "Please check your internet connection and try again.";
+"error.invalid_city" = "City Not Found";
+"error.invalid_city_desc" = "We couldn't find that city. Please check the spelling and try again.";
+"error.server_error" = "Server Error";
+"error.server_error_desc" = "Something went wrong on our end. Please try again later.";
+"error.unknown" = "Something Went Wrong";
+"error.unknown_desc" = "An unexpected error occurred. Please try again.";
+"error.location_denied" = "Location Access Denied";
+"error.location_denied_desc" = "Please enable location access in Settings to use this feature.";
+"error.location_unavailable" = "Location Unavailable";
+"error.location_unavailable_desc" = "Unable to get your current location. Please try again.";
+
+// MARK: - Loading Messages
+"loading.weather" = "Loading weather data...";
+"loading.forecast" = "Loading forecast...";
+"loading.location" = "Getting your location...";
+"loading.map" = "Loading map...";
+
+// MARK: - Units
+"unit.celsius" = "°C";
+"unit.fahrenheit" = "°F";
+"unit.km" = "km";
+"unit.meters" = "m";
+"unit.kmh" = "km/h";
+"unit.mph" = "mph";
+"unit.hpa" = "hPa";
+"unit.percent" = "%";
+
+// MARK: - Time
+"time.today" = "Today";
+"time.tomorrow" = "Tomorrow";
+"time.yesterday" = "Yesterday";
+"time.now" = "Now";
+
+// MARK: - Notifications
+"notification.daily_summary" = "Daily Weather Summary";
+"notification.weather_alert" = "Weather Alert";
+"notification.temp_drop" = "Temperature Drop Alert";
+"notification.severe_weather" = "Severe Weather Alert";
+
+// MARK: - Background Tasks
+"background.fetching_weather" = "Updating weather data...";
+"background.update_complete" = "Weather updated successfully";
+"background.update_failed" = "Failed to update weather";

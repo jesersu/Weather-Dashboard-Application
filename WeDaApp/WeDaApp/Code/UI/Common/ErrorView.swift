@@ -39,7 +39,7 @@ public struct ErrorView: View {
             }
 
             Button(action: retryAction) {
-                Label("Retry", systemImage: "arrow.clockwise")
+                Label(L10n.Common.retry, systemImage: "arrow.clockwise")
                     .font(.headline)
                     .foregroundColor(.white)
                     .padding(.horizontal, 32)
@@ -73,13 +73,13 @@ public struct ErrorView: View {
     private var errorTitle: String {
         switch error {
         case .noInternetConnection:
-            return "No Connection"
+            return L10n.Error.noInternet
         case .invalidCity:
-            return "City Not Found"
+            return L10n.Error.invalidCity
         case .serverError:
-            return "Server Error"
+            return L10n.Error.serverError
         case .unknownError:
-            return "Something Went Wrong"
+            return L10n.Error.unknown
         }
     }
 

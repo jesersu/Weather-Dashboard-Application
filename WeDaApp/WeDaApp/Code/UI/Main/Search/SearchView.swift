@@ -19,10 +19,10 @@ struct SearchView: View {
             ZStack(alignment: .top) {
                 VStack(spacing: 0) {
                     if viewModel.isLoadingLocation {
-                        LoadingView(message: "Getting your location...")
+                        LoadingView(message: L10n.Search.gettingLocation)
                             .accessibilityIdentifier(UITestIDs.SearchView.locationLoadingView.rawValue)
                     } else if viewModel.isLoading {
-                        LoadingView(message: "Searching weather...")
+                        LoadingView(message: L10n.Search.searchingWeather)
                     } else if let error = viewModel.error {
                         ErrorView(error: error) {
                             viewModel.retry()
@@ -34,7 +34,7 @@ struct SearchView: View {
                                 if viewModel.isShowingCachedData {
                                     HStack {
                                         Image(systemName: "wifi.slash")
-                                        Text("Showing cached data (offline)")
+                                        Text(L10n.Search.cachedData)
                                             .font(.caption)
                                     }
                                     .foregroundColor(.orange)
@@ -48,7 +48,7 @@ struct SearchView: View {
                                 NavigationLink {
                                     WeatherDetailsView(city: weather.name)
                                 } label: {
-                                    Label("View Detailed Forecast", systemImage: "chart.line.uptrend.xyaxis")
+                                    Label(L10n.Search.viewDetails, systemImage: "chart.line.uptrend.xyaxis")
                                         .font(.headline)
                                         .foregroundColor(.white)
                                         .frame(maxWidth: .infinity)
@@ -69,11 +69,11 @@ struct SearchView: View {
                                 .font(.system(size: 80))
                                 .foregroundStyle(.blue.gradient)
 
-                            Text("Search Weather")
+                            Text(L10n.Search.emptyTitle)
                                 .font(.title)
                                 .fontWeight(.bold)
 
-                            Text("Enter a city name to get current weather information")
+                            Text(L10n.Search.emptySubtitle)
                                 .font(.body)
                                 .foregroundColor(.secondary)
                                 .multilineTextAlignment(.center)
@@ -133,11 +133,11 @@ struct SearchView: View {
                     .transition(.opacity.combined(with: .move(edge: .top)))
                 }
             }
-            .navigationTitle("Search")
+            .navigationTitle(L10n.Search.title)
             .searchable(
                 text: $viewModel.searchText,
                 placement: .navigationBarDrawer(displayMode: .always),
-                prompt: "Enter city name"
+                prompt: L10n.Search.placeholder
             )
             .onSubmit(of: .search) {
                 viewModel.hideSuggestions()

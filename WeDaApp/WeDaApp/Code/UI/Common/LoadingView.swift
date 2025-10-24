@@ -13,7 +13,7 @@ import DollarGeneralTemplateHelpers
 public struct LoadingView: View {
     let message: String
 
-    public init(message: String = "Loading...") {
+    public init(message: String = L10n.Common.loading) {
         self.message = message
     }
 
