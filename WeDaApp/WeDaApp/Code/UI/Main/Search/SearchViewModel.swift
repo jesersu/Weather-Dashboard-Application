@@ -297,8 +297,8 @@ final class SearchViewModel: ObservableObject {
 
             weatherData = weather
             isProgrammaticUpdate = true
-            searchText = weather.name
-            hideSuggestions() // Prevent autocomplete from showing when text is set programmatically
+            // Keep search text empty for location weather - user can search manually if needed
+            hideSuggestions() // Prevent autocomplete from triggering
 
             // Cache weather data for offline use
             cacheWeather(weather)
