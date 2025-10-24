@@ -30,6 +30,7 @@ final class SearchViewModel: ObservableObject {
 
     // Location properties
     @Published private(set) var isLoadingLocation = false
+    @Published private(set) var isLocationWeather = false
 
     // MARK: - Dependencies
 
@@ -113,6 +114,7 @@ final class SearchViewModel: ObservableObject {
             LogInfo("Searching weather for: \(trimmedCity)")
             let weather = try await weatherService.fetchCurrentWeather(city: trimmedCity)
             weatherData = weather
+            isLocationWeather = false
 
             // Cache weather data for offline use
             cacheWeather(weather)
@@ -151,6 +153,7 @@ final class SearchViewModel: ObservableObject {
     func clearSearch() {
         weatherData = nil
         error = nil
+        isLocationWeather = false
         isProgrammaticUpdate = true
         searchText = ""
         isShowingCachedData = false
@@ -296,6 +299,7 @@ final class SearchViewModel: ObservableObject {
             )
 
             weatherData = weather
+            isLocationWeather = true
             isProgrammaticUpdate = true
             // Keep search text empty for location weather - user can search manually if needed
             hideSuggestions() // Prevent autocomplete from triggering
@@ -321,6 +325,7 @@ final class SearchViewModel: ObservableObject {
                 LogInfo("No cached weather available, showing empty state")
             } else {
                 LogInfo("Showing cached weather as fallback for location error")
+                isLocationWeather = true
                 isShowingCachedData = true
             }
         } catch let apiError as APIError {
@@ -334,6 +339,7 @@ final class SearchViewModel: ObservableObject {
             } else {
                 // Show cached data with offline indicator
                 LogInfo("Showing cached weather as fallback for API error")
+                isLocationWeather = true
                 isShowingCachedData = true
             }
         } catch {
@@ -342,6 +348,7 @@ final class SearchViewModel: ObservableObject {
             loadCachedWeather()
             if weatherData != nil {
                 LogInfo("Showing cached weather as fallback for unknown error")
+                isLocationWeather = true
                 isShowingCachedData = true
             }
         }

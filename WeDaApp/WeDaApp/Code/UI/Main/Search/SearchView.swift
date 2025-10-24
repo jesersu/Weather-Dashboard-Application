@@ -149,7 +149,7 @@ struct SearchView: View {
                 viewModel.searchCities(query: newValue)
             }
             .toolbar {
-                if viewModel.weatherData != nil {
+                if viewModel.weatherData != nil && !viewModel.isLocationWeather {
                     Button {
                         viewModel.clearSearch()
                     } label: {
