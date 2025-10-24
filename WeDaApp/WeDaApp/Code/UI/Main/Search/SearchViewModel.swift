@@ -60,7 +60,7 @@ final class SearchViewModel: ObservableObject {
         self.weatherService = weatherService
         self.storageService = storageService
         self.locationManager = locationManager ?? LocationManager()
-        loadCachedWeather()
+        // Cache will be loaded as fallback if location fetch fails
         setupLocationObserver()
     }
 
@@ -314,12 +314,36 @@ final class SearchViewModel: ObservableObject {
 
         } catch let locationError as LocationError {
             LogError("Location error: \(locationError.message)")
-            // Don't show error for location failures - just stay on empty state
+            // Fallback to cached weather if available
+            loadCachedWeather()
+            if weatherData == nil {
+                // No cache available, show empty state
+                LogInfo("No cached weather available, showing empty state")
+            } else {
+                LogInfo("Showing cached weather as fallback for location error")
+                isShowingCachedData = true
+            }
         } catch let apiError as APIError {
             LogError("Weather API error: \(apiError.message)")
-            error = apiError
+            // Fallback to cached weather if available
+            loadCachedWeather()
+            if weatherData == nil {
+                // No cache available, show API error
+                error = apiError
+                LogInfo("No cached weather available, showing error")
+            } else {
+                // Show cached data with offline indicator
+                LogInfo("Showing cached weather as fallback for API error")
+                isShowingCachedData = true
+            }
         } catch {
             LogError("Unknown error fetching location weather: \(error)")
+            // Fallback to cached weather if available
+            loadCachedWeather()
+            if weatherData != nil {
+                LogInfo("Showing cached weather as fallback for unknown error")
+                isShowingCachedData = true
+            }
         }
 
         isLoadingLocation = false
