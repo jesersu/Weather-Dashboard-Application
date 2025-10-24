@@ -18,13 +18,13 @@ public struct LoadingView: View {
     }
 
     public var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: AppSpacing.lg) {
             ProgressView()
                 .scaleEffect(1.5)
-                .progressViewStyle(CircularProgressViewStyle())
+                .progressViewStyle(CircularProgressViewStyle(tint: AppColors.primary))
 
             Text(message)
-                .font(.subheadline)
+                .font(AppTypography.body)
                 .foregroundColor(.secondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

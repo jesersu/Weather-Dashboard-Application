@@ -17,16 +17,15 @@ public struct WeatherCard: View {
     }
 
     public var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: AppSpacing.lg) {
             // City name and country
-            VStack(spacing: 4) {
+            VStack(spacing: AppSpacing.xs) {
                 Text(weatherData.name)
-                    .font(.title)
-                    .fontWeight(.bold)
+                    .font(AppTypography.largeTitle)
 
                 if let country = weatherData.sys.country {
                     Text(country)
-                        .font(.subheadline)
+                        .font(AppTypography.caption)
                         .foregroundColor(.secondary)
                 }
             }
@@ -35,7 +34,7 @@ public struct WeatherCard: View {
             // OPTIMIZATION: Using CachedAsyncImage instead of AsyncImage
             // Benefits: Reduces network calls, improves scroll performance, saves bandwidth
             if let weather = weatherData.weather.first {
-                VStack(spacing: 8) {
+                VStack(spacing: AppSpacing.md) {
                     CachedAsyncImage(url: weather.iconURL) { image in
                         image
                             .resizable()
@@ -43,31 +42,31 @@ public struct WeatherCard: View {
                     } placeholder: {
                         ProgressView()
                     }
-                    .frame(width: 100, height: 100)
+                    .frame(width: 120, height: 120)
 
                     Text(weather.description.capitalized)
-                        .font(.headline)
+                        .font(AppTypography.headline)
                         .foregroundColor(.secondary)
                 }
             }
 
             // Temperature
             Text("\(Int(weatherData.main.temp))°C")
-                .font(.system(size: 64, weight: .thin))
+                .font(AppTypography.weatherTemp)
 
             // Feels like
             Text("\(L10n.Weather.feelsLike) \(Int(weatherData.main.feelsLike))°C")
-                .font(.subheadline)
+                .font(AppTypography.body)
                 .foregroundColor(.secondary)
 
             Divider()
-                .padding(.vertical, 8)
+                .padding(.vertical, AppSpacing.sm)
 
             // Weather details grid
             LazyVGrid(columns: [
                 GridItem(.flexible()),
                 GridItem(.flexible())
-            ], spacing: 16) {
+            ], spacing: AppSpacing.lg) {
                 WeatherDetailItem(
                     icon: "thermometer.low",
                     label: L10n.Weather.tempMin,
@@ -107,12 +106,17 @@ public struct WeatherCard: View {
                 }
             }
         }
-        .padding()
+        .padding(AppSpacing.xl)
         .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.secondarySystemBackground))
+            RoundedRectangle(cornerRadius: AppRadius.xLarge)
+                .fill(AppColors.cardBackground)
         )
-        .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
+        .shadow(
+            color: AppShadow.medium.color,
+            radius: AppShadow.medium.radius,
+            x: AppShadow.medium.x,
+            y: AppShadow.medium.y
+        )
     }
 }
 
@@ -123,20 +127,20 @@ private struct WeatherDetailItem: View {
     let value: String
 
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: AppSpacing.sm) {
             Image(systemName: icon)
-                .font(.title2)
-                .foregroundColor(.blue)
+                .font(AppTypography.title3)
+                .foregroundColor(AppColors.primary)
 
             Text(label)
-                .font(.caption)
+                .font(AppTypography.caption)
                 .foregroundColor(.secondary)
 
             Text(value)
-                .font(.subheadline)
-                .fontWeight(.medium)
+                .font(AppTypography.bodyMedium)
         }
         .frame(maxWidth: .infinity)
+        .padding(.vertical, AppSpacing.sm)
     }
 }
 

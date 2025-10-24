@@ -43,20 +43,26 @@ struct SearchView: View {
                                 }
 
                                 WeatherCard(weatherData: weather)
-                                    .padding()
+                                    .padding(.horizontal, AppSpacing.md)
 
                                 NavigationLink {
                                     WeatherDetailsView(city: weather.name)
                                 } label: {
                                     Label(L10n.Search.viewDetails, systemImage: "chart.line.uptrend.xyaxis")
-                                        .font(.headline)
+                                        .font(AppTypography.headline)
                                         .foregroundColor(.white)
                                         .frame(maxWidth: .infinity)
-                                        .padding()
-                                        .background(Color.blue)
-                                        .cornerRadius(12)
+                                        .padding(AppSpacing.md)
+                                        .background(AppGradients.primary)
+                                        .cornerRadius(AppRadius.medium)
+                                        .shadow(
+                                            color: AppShadow.small.color,
+                                            radius: AppShadow.small.radius,
+                                            x: AppShadow.small.x,
+                                            y: AppShadow.small.y
+                                        )
                                 }
-                                .padding(.horizontal)
+                                .padding(.horizontal, AppSpacing.md)
                             }
                             .padding(.top, 8)
                         }
@@ -64,20 +70,28 @@ struct SearchView: View {
                     } else {
                         // Empty state
                         Spacer()
-                        VStack(spacing: 20) {
-                            Image(systemName: "cloud.sun.fill")
-                                .font(.system(size: 80))
-                                .foregroundStyle(.blue.gradient)
+                        VStack(spacing: AppSpacing.xl) {
+                            ZStack {
+                                Circle()
+                                    .fill(AppGradients.primary)
+                                    .frame(width: 140, height: 140)
+                                    .opacity(0.15)
 
-                            Text(L10n.Search.emptyTitle)
-                                .font(.title)
-                                .fontWeight(.bold)
+                                Image(systemName: "cloud.sun.fill")
+                                    .font(.system(size: 80))
+                                    .foregroundStyle(AppGradients.primary)
+                            }
 
-                            Text(L10n.Search.emptySubtitle)
-                                .font(.body)
-                                .foregroundColor(.secondary)
-                                .multilineTextAlignment(.center)
-                                .padding(.horizontal)
+                            VStack(spacing: AppSpacing.md) {
+                                Text(L10n.Search.emptyTitle)
+                                    .font(AppTypography.largeTitle)
+
+                                Text(L10n.Search.emptySubtitle)
+                                    .font(AppTypography.body)
+                                    .foregroundColor(.secondary)
+                                    .multilineTextAlignment(.center)
+                                    .padding(.horizontal, AppSpacing.xl)
+                            }
                         }
                         Spacer()
                     }
