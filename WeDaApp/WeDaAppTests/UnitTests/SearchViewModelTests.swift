@@ -167,6 +167,83 @@ final class SearchViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.searchText, "")
     }
 
+    // MARK: - Location Load State Persistence Tests
+
+    func test_loadLocationWeatherIfNeeded_onlyLoadsOnce() async {
+        // Given
+        mockLocationManager.authorizationStatus = .authorizedWhenInUse
+        mockLocationManager.currentLocation = CLLocation(latitude: 51.5074, longitude: -0.1257)
+        mockWeatherService.weatherResult = createMockWeatherData()
+
+        // When - Call multiple times (simulating navigation back to search view)
+        await viewModel.loadLocationWeatherIfNeeded()
+        let firstCallCount = mockWeatherService.fetchWeatherByCoordinatesCallCount
+
+        await viewModel.loadLocationWeatherIfNeeded()
+        let secondCallCount = mockWeatherService.fetchWeatherByCoordinatesCallCount
+
+        await viewModel.loadLocationWeatherIfNeeded()
+        let thirdCallCount = mockWeatherService.fetchWeatherByCoordinatesCallCount
+
+        // Then - Should only fetch once
+        XCTAssertEqual(firstCallCount, 1, "Should fetch location weather on first call")
+        XCTAssertEqual(secondCallCount, 1, "Should NOT fetch again on second call")
+        XCTAssertEqual(thirdCallCount, 1, "Should NOT fetch again on third call")
+    }
+
+    func test_loadLocationWeatherIfNeeded_preservesExistingWeatherData() async {
+        // Given - User has searched for a city
+        mockWeatherService.weatherResult = createMockWeatherData()
+        await viewModel.search(city: "London")
+
+        XCTAssertEqual(viewModel.weatherData?.name, "London")
+
+        // Configure location to return different city
+        mockLocationManager.authorizationStatus = .authorizedWhenInUse
+        mockLocationManager.currentLocation = CLLocation(latitude: 40.7128, longitude: -74.0060)
+        mockWeatherService.weatherDataToReturn = WeatherData(
+            id: 456,
+            name: "New York",
+            coord: Coordinates(lon: -74.0060, lat: 40.7128),
+            weather: [Weather(id: 800, main: "Clear", description: "clear sky", icon: "01d")],
+            main: MainWeatherData(temp: 20.0, feelsLike: 19.0, tempMin: 18.0, tempMax: 22.0, pressure: 1015, humidity: 65),
+            wind: Wind(speed: 4.0, deg: 200, gust: nil),
+            clouds: Clouds(all: 0),
+            dt: 1634567890,
+            sys: Sys(country: "US", sunrise: 1634545000, sunset: 1634585000),
+            timezone: 0,
+            visibility: 10000
+        )
+
+        // When - Navigate back to search view (triggers loadLocationWeatherIfNeeded)
+        await viewModel.loadLocationWeatherIfNeeded()
+
+        // Then - Should preserve London, not load New York
+        XCTAssertEqual(viewModel.weatherData?.name, "London", "Should preserve existing search result")
+        XCTAssertNotEqual(viewModel.weatherData?.name, "New York", "Should NOT override with location weather")
+        XCTAssertEqual(mockWeatherService.fetchWeatherByCoordinatesCallCount, 0, "Should not call location API")
+    }
+
+    func test_loadLocationWeatherIfNeeded_clearedStateAllowsNewSearch() async {
+        // Given - Load location weather once
+        mockLocationManager.authorizationStatus = .authorizedWhenInUse
+        mockLocationManager.currentLocation = CLLocation(latitude: 51.5074, longitude: -0.1257)
+        mockWeatherService.weatherResult = createMockWeatherData()
+
+        await viewModel.loadLocationWeatherIfNeeded()
+        XCTAssertEqual(mockWeatherService.fetchWeatherByCoordinatesCallCount, 1)
+        XCTAssertNotNil(viewModel.weatherData)
+
+        // When - User clears search
+        viewModel.clearSearch()
+        XCTAssertNil(viewModel.weatherData)
+
+        // Then - User can manually search for a new city
+        await viewModel.search(city: "Paris")
+        XCTAssertEqual(mockWeatherService.fetchWeatherCallCount, 1, "Should allow manual search after clear")
+        XCTAssertNotNil(viewModel.weatherData)
+    }
+
     // MARK: - Helper Methods
 
     private func createMockWeatherData() -> WeatherData {

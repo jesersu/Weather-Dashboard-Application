@@ -10,6 +10,8 @@
 		CA77CA9D2EA7657000C43B53 /* NetworkingKit in Frameworks */ = {isa = PBXBuildFile; productRef = CA77CA9C2EA7657000C43B53 /* NetworkingKit */; };
 		CA77CA9F2EA7657000C43B53 /* DollarGeneralTemplateHelpers in Frameworks */ = {isa = PBXBuildFile; productRef = CA77CA9E2EA7657000C43B53 /* DollarGeneralTemplateHelpers */; };
 		CA77CAA12EA7657000C43B53 /* DollarGeneralPersist in Frameworks */ = {isa = PBXBuildFile; productRef = CA77CAA02EA7657000C43B53 /* DollarGeneralPersist */; };
+		CA7D8DA32EA8F2E300BAA874 /* Quick in Frameworks */ = {isa = PBXBuildFile; productRef = CA7D8D3F2EA8E9F000BAA874 /* Quick */; };
+		CA7D8DA42EA8F2E300BAA874 /* Nimble in Frameworks */ = {isa = PBXBuildFile; productRef = CA7D8D402EA8E9F000BAA874 /* Nimble */; };
 		CA880EAE2EA76C7C00C875AE /* ArkanaKeysInterfaces in Frameworks */ = {isa = PBXBuildFile; productRef = CA880EAD2EA76C7C00C875AE /* ArkanaKeysInterfaces */; };
 		CA880EB02EA76C7C00C875AE /* ArkanaKeys in Frameworks */ = {isa = PBXBuildFile; productRef = CA880EAF2EA76C7C00C875AE /* ArkanaKeys */; };
 /* End PBXBuildFile section */
@@ -72,6 +74,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CA7D8DA42EA8F2E300BAA874 /* Nimble in Frameworks */,
+				CA7D8DA32EA8F2E300BAA874 /* Quick in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -650,16 +654,6 @@
 			package = CA77CA9A2EA7615000C43B53 /* XCLocalSwiftPackageReference "../DollarGeneralPersist" */;
 			productName = DollarGeneralPersist;
 		};
-		CA880EAD2EA76C7C00C875AE /* ArkanaKeysInterfaces */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = CA77CAA22EA7674400C43B53 /* XCLocalSwiftPackageReference "../ArkanaKeys/ArkanaKeysInterfaces" */;
-			productName = ArkanaKeysInterfaces;
-		};
-		CA880EAF2EA76C7C00C875AE /* ArkanaKeys */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = CA77CAA32EA7675800C43B53 /* XCLocalSwiftPackageReference "../ArkanaKeys/ArkanaKeys" */;
-			productName = ArkanaKeys;
-		};
 		CA7D8D3F2EA8E9F000BAA874 /* Quick */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = CA7D8D3E2EA8E97300BAA874 /* XCRemoteSwiftPackageReference "Quick" */;
@@ -669,6 +663,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CA7D8D3D2EA8E94100BAA874 /* XCRemoteSwiftPackageReference "Nimble" */;
 			productName = Nimble;
+		};
+		CA880EAD2EA76C7C00C875AE /* ArkanaKeysInterfaces */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CA77CAA22EA7674400C43B53 /* XCLocalSwiftPackageReference "../ArkanaKeys/ArkanaKeysInterfaces" */;
+			productName = ArkanaKeysInterfaces;
+		};
+		CA880EAF2EA76C7C00C875AE /* ArkanaKeys */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CA77CAA32EA7675800C43B53 /* XCLocalSwiftPackageReference "../ArkanaKeys/ArkanaKeys" */;
+			productName = ArkanaKeys;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

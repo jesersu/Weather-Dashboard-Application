@@ -32,9 +32,11 @@ public struct WeatherCard: View {
             }
 
             // Weather icon and description
+            // OPTIMIZATION: Using CachedAsyncImage instead of AsyncImage
+            // Benefits: Reduces network calls, improves scroll performance, saves bandwidth
             if let weather = weatherData.weather.first {
                 VStack(spacing: 8) {
-                    AsyncImage(url: weather.iconURL) { image in
+                    CachedAsyncImage(url: weather.iconURL) { image in
                         image
                             .resizable()
                             .aspectRatio(contentMode: .fit)
