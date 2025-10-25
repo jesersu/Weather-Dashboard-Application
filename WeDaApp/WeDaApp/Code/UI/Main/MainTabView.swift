@@ -10,27 +10,24 @@ import SwiftUI
 
 struct MainTabView: View {
     var body: some View {
-        TabView {
-            SearchView()
-                .tabItem {
-                    Label(L10n.Tab.search, systemImage: "magnifyingglass")
+        CustomTabBarView { tabId in
+            switch tabId {
+            case TabBarItem.search.id:
+                SearchView()
+
+            case TabBarItem.favorites.id:
+                FavoritesView()
+
+            case TabBarItem.history.id:
+                HistoryView()
+
+            case TabBarItem.map.id:
+                NavigationStack {
+                    WeatherMapView()
                 }
 
-            FavoritesView()
-                .tabItem {
-                    Label(L10n.Tab.favorites, systemImage: "star.fill")
-                }
-
-            HistoryView()
-                .tabItem {
-                    Label(L10n.Tab.history, systemImage: "clock.fill")
-                }
-
-            NavigationStack {
-                WeatherMapView()
-            }
-            .tabItem {
-                Label(L10n.Tab.map, systemImage: "map.fill")
+            default:
+                EmptyView()
             }
         }
     }
