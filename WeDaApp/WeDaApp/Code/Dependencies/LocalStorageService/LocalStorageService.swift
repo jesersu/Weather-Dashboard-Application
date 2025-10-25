@@ -20,6 +20,11 @@ public protocol LocalStorageServiceProtocol {
     func getHistory() throws -> [SearchHistoryItem]
     func removeHistoryItem(id: String) throws
     func clearHistory() throws
+
+    func saveWeatherCache(_ cache: WeatherCache) throws
+    func getWeatherCache(cityName: String) throws -> WeatherCache?
+    func clearExpiredCaches(olderThanMinutes: Int) throws
+    func clearAllCaches() throws
 }
 
 /// Service for managing local data persistence using SwiftData
@@ -118,6 +123,40 @@ public class LocalStorageService: LocalStorageServiceProtocol {
     @MainActor
     public func clearHistory() throws {
         try swiftDataManager.clearHistory()
+    }
+
+    // MARK: - Weather Cache
+
+    /// Save weather cache for a city
+    /// - Parameter cache: WeatherCache to save
+    /// - Throws: SwiftData errors
+    @MainActor
+    public func saveWeatherCache(_ cache: WeatherCache) throws {
+        try swiftDataManager.saveWeatherCache(cache)
+    }
+
+    /// Get weather cache for a city
+    /// - Parameter cityName: City name to lookup
+    /// - Returns: Cached weather data if exists
+    /// - Throws: SwiftData errors
+    @MainActor
+    public func getWeatherCache(cityName: String) throws -> WeatherCache? {
+        return try swiftDataManager.getWeatherCache(cityName: cityName)
+    }
+
+    /// Clear expired weather caches
+    /// - Parameter olderThanMinutes: Remove caches older than this many minutes
+    /// - Throws: SwiftData errors
+    @MainActor
+    public func clearExpiredCaches(olderThanMinutes: Int) throws {
+        try swiftDataManager.clearExpiredCaches(olderThanMinutes: olderThanMinutes)
+    }
+
+    /// Clear all weather caches
+    /// - Throws: SwiftData errors
+    @MainActor
+    public func clearAllCaches() throws {
+        try swiftDataManager.clearAllCaches()
     }
 }
 

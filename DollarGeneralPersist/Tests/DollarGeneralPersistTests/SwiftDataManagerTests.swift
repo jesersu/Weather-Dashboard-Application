@@ -22,7 +22,8 @@ final class SwiftDataManagerTests: XCTestCase {
         // Create in-memory container for testing
         let schema = Schema([
             FavoriteCityModel.self,
-            SearchHistoryModel.self
+            SearchHistoryModel.self,
+            WeatherCacheModel.self
         ])
 
         let configuration = ModelConfiguration(
@@ -338,5 +339,209 @@ final class SwiftDataManagerTests: XCTestCase {
         // Then
         XCTAssertEqual(items.count, 1)
         XCTAssertEqual(items.first?.cityName, "Seattle")
+    }
+
+    // MARK: - Weather Cache Tests
+
+    func test_saveWeatherCache_success() throws {
+        // Given
+        let cache = WeatherCache(
+            cityName: "London",
+            currentWeatherJSON: "{\"temp\":20}",
+            forecastJSON: "{\"list\":[]}",
+            lastUpdated: Date()
+        )
+
+        // When
+        try manager.saveWeatherCache(cache)
+
+        // Then
+        let retrieved = try manager.getWeatherCache(cityName: "London")
+        XCTAssertNotNil(retrieved)
+        XCTAssertEqual(retrieved?.cityName, "London")
+        XCTAssertEqual(retrieved?.currentWeatherJSON, "{\"temp\":20}")
+        XCTAssertEqual(retrieved?.forecastJSON, "{\"list\":[]}")
+    }
+
+    func test_getWeatherCache_nonExistent_returnsNil() throws {
+        // When
+        let result = try manager.getWeatherCache(cityName: "NonExistentCity")
+
+        // Then
+        XCTAssertNil(result)
+    }
+
+    func test_saveWeatherCache_updateExisting() throws {
+        // Given - Save initial cache
+        let oldCache = WeatherCache(
+            cityName: "Paris",
+            currentWeatherJSON: "{\"temp\":15}",
+            forecastJSON: nil,
+            lastUpdated: Date().addingTimeInterval(-1000)
+        )
+        try manager.saveWeatherCache(oldCache)
+
+        // When - Update with new data
+        let newCache = WeatherCache(
+            cityName: "Paris",
+            currentWeatherJSON: "{\"temp\":18}",
+            forecastJSON: "{\"forecast\":true}",
+            lastUpdated: Date()
+        )
+        try manager.saveWeatherCache(newCache)
+
+        // Then - Should have only one cache entry with updated data
+        let retrieved = try manager.getWeatherCache(cityName: "Paris")
+        XCTAssertNotNil(retrieved)
+        XCTAssertEqual(retrieved?.currentWeatherJSON, "{\"temp\":18}")
+        XCTAssertEqual(retrieved?.forecastJSON, "{\"forecast\":true}")
+    }
+
+    func test_getWeatherCache_caseInsensitive() throws {
+        // Given
+        let cache = WeatherCache(
+            cityName: "Tokyo",
+            currentWeatherJSON: "{}",
+            forecastJSON: nil
+        )
+        try manager.saveWeatherCache(cache)
+
+        // When
+        let resultLower = try manager.getWeatherCache(cityName: "tokyo")
+        let resultUpper = try manager.getWeatherCache(cityName: "TOKYO")
+        let resultMixed = try manager.getWeatherCache(cityName: "ToKyO")
+
+        // Then - All should return the cache
+        XCTAssertNotNil(resultLower)
+        XCTAssertNotNil(resultUpper)
+        XCTAssertNotNil(resultMixed)
+    }
+
+    func test_clearExpiredCaches_removesOnlyExpired() throws {
+        // Given - Fresh cache (10 min old)
+        let freshCache = WeatherCache(
+            cityName: "Berlin",
+            currentWeatherJSON: "{}",
+            forecastJSON: nil,
+            lastUpdated: Date().addingTimeInterval(-10 * 60)
+        )
+        try manager.saveWeatherCache(freshCache)
+
+        // Given - Expired cache (40 min old)
+        let expiredCache = WeatherCache(
+            cityName: "Madrid",
+            currentWeatherJSON: "{}",
+            forecastJSON: nil,
+            lastUpdated: Date().addingTimeInterval(-40 * 60)
+        )
+        try manager.saveWeatherCache(expiredCache)
+
+        // When - Clear caches older than 30 minutes
+        try manager.clearExpiredCaches(olderThanMinutes: 30)
+
+        // Then
+        let freshResult = try manager.getWeatherCache(cityName: "Berlin")
+        let expiredResult = try manager.getWeatherCache(cityName: "Madrid")
+
+        XCTAssertNotNil(freshResult, "Fresh cache should still exist")
+        XCTAssertNil(expiredResult, "Expired cache should be removed")
+    }
+
+    func test_clearAllCaches_removesAllEntries() throws {
+        // Given - Save multiple caches
+        try manager.saveWeatherCache(WeatherCache(cityName: "City1", currentWeatherJSON: "{}", forecastJSON: nil))
+        try manager.saveWeatherCache(WeatherCache(cityName: "City2", currentWeatherJSON: "{}", forecastJSON: nil))
+        try manager.saveWeatherCache(WeatherCache(cityName: "City3", currentWeatherJSON: "{}", forecastJSON: nil))
+
+        // When
+        try manager.clearAllCaches()
+
+        // Then
+        XCTAssertNil(try manager.getWeatherCache(cityName: "City1"))
+        XCTAssertNil(try manager.getWeatherCache(cityName: "City2"))
+        XCTAssertNil(try manager.getWeatherCache(cityName: "City3"))
+    }
+
+    func test_saveWeatherCache_enforcesLimit() throws {
+        // Given - Save 55 caches (exceeds limit of 50)
+        for i in 1...55 {
+            let cache = WeatherCache(
+                cityName: "City\(i)",
+                currentWeatherJSON: "{}",
+                forecastJSON: nil,
+                lastUpdated: Date().addingTimeInterval(TimeInterval(-i * 60)) // Older = higher number
+            )
+            try manager.saveWeatherCache(cache)
+        }
+
+        // When - Check total count
+        // Note: This will be verified after implementation
+
+        // Then - Should only keep 50 most recent
+        // Most recent should exist (City1)
+        XCTAssertNotNil(try manager.getWeatherCache(cityName: "City1"))
+
+        // Oldest should be deleted (City55, City54, City53, City52, City51)
+        XCTAssertNil(try manager.getWeatherCache(cityName: "City55"))
+        XCTAssertNil(try manager.getWeatherCache(cityName: "City54"))
+    }
+
+    func test_weatherCachePersistedAcrossManagerInstances() throws {
+        // Given
+        let cache = WeatherCache(
+            cityName: "Amsterdam",
+            currentWeatherJSON: "{\"temp\":12}",
+            forecastJSON: "{\"forecast\":true}"
+        )
+        try manager.saveWeatherCache(cache)
+
+        // When - Create new manager instance with same container
+        let newManager = SwiftDataManager(modelContainer: container)
+        let retrieved = try newManager.getWeatherCache(cityName: "Amsterdam")
+
+        // Then
+        XCTAssertNotNil(retrieved)
+        XCTAssertEqual(retrieved?.cityName, "Amsterdam")
+        XCTAssertEqual(retrieved?.currentWeatherJSON, "{\"temp\":12}")
+    }
+
+    func test_concurrentCacheOperations_threadSafe() async throws {
+        // When - Perform concurrent cache operations
+        await withTaskGroup(of: Void.self) { group in
+            for i in 1...10 {
+                group.addTask { @MainActor in
+                    let cache = WeatherCache(
+                        cityName: "CacheCity\(i)",
+                        currentWeatherJSON: "{\"temp\":\(i)}",
+                        forecastJSON: nil
+                    )
+                    try? self.manager.saveWeatherCache(cache)
+                }
+            }
+        }
+
+        // Then - All caches should be saved
+        for i in 1...10 {
+            let result = try manager.getWeatherCache(cityName: "CacheCity\(i)")
+            XCTAssertNotNil(result, "Cache for CacheCity\(i) should exist")
+        }
+    }
+
+    func test_clearExpiredCaches_withZeroMinutes_removesAll() throws {
+        // Given - Save caches with various ages
+        try manager.saveWeatherCache(WeatherCache(cityName: "Recent", currentWeatherJSON: "{}", forecastJSON: nil))
+        try manager.saveWeatherCache(WeatherCache(
+            cityName: "Old",
+            currentWeatherJSON: "{}",
+            forecastJSON: nil,
+            lastUpdated: Date().addingTimeInterval(-100)
+        ))
+
+        // When - Clear with 0 minutes (all are expired)
+        try manager.clearExpiredCaches(olderThanMinutes: 0)
+
+        // Then - All should be removed
+        XCTAssertNil(try manager.getWeatherCache(cityName: "Recent"))
+        XCTAssertNil(try manager.getWeatherCache(cityName: "Old"))
     }
 }

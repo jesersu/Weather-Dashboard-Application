@@ -23,6 +23,12 @@ public protocol SwiftDataManagerProtocol {
     func getHistory() throws -> [SearchHistoryItem]
     func removeHistoryItem(id: String) throws
     func clearHistory() throws
+
+    // Weather Cache
+    func saveWeatherCache(_ cache: WeatherCache) throws
+    func getWeatherCache(cityName: String) throws -> WeatherCache?
+    func clearExpiredCaches(olderThanMinutes: Int) throws
+    func clearAllCaches() throws
 }
 
 /// SwiftData manager for persistent storage of favorites and history
@@ -33,6 +39,7 @@ public final class SwiftDataManager: SwiftDataManagerProtocol {
     private let modelContainer: ModelContainer
     private let modelContext: ModelContext
     private let maxHistoryItems = 20
+    private let maxCacheItems = 50
 
     /// Initialize with a ModelContainer
     /// - Parameter modelContainer: The SwiftData container (can be in-memory for testing)
@@ -186,6 +193,96 @@ public final class SwiftDataManager: SwiftDataManagerProtocol {
 
         try modelContext.save()
     }
+
+    // MARK: - Weather Cache
+
+    /// Save weather cache for a city (creates or updates)
+    /// - Parameter cache: WeatherCache to save
+    /// - Throws: SwiftData errors
+    public func saveWeatherCache(_ cache: WeatherCache) throws {
+        // Check for existing cache (case-insensitive)
+        let descriptor = FetchDescriptor<WeatherCacheModel>()
+        let allCaches = try modelContext.fetch(descriptor)
+
+        let lowercasedName = cache.cityName.lowercased()
+        let existingCache = allCaches.first { $0.cityName.lowercased() == lowercasedName }
+
+        if let existing = existingCache {
+            // Update existing cache
+            existing.currentWeatherJSON = cache.currentWeatherJSON
+            existing.forecastJSON = cache.forecastJSON
+            existing.lastUpdated = cache.lastUpdated
+        } else {
+            // Insert new cache
+            let model = WeatherCacheModel.from(cache)
+            modelContext.insert(model)
+
+            // Enforce cache limit - fetch all and delete oldest if needed
+            let sortedDescriptor = FetchDescriptor<WeatherCacheModel>(
+                sortBy: [SortDescriptor(\.lastUpdated, order: .reverse)]
+            )
+            let allSortedCaches = try modelContext.fetch(sortedDescriptor)
+
+            if allSortedCaches.count > maxCacheItems {
+                // Delete oldest items
+                let itemsToDelete = allSortedCaches.dropFirst(maxCacheItems)
+                for oldItem in itemsToDelete {
+                    modelContext.delete(oldItem)
+                }
+            }
+        }
+
+        try modelContext.save()
+    }
+
+    /// Get weather cache for a city (case-insensitive)
+    /// - Parameter cityName: City name to lookup
+    /// - Returns: Cached weather data if exists, nil otherwise
+    /// - Throws: SwiftData errors
+    public func getWeatherCache(cityName: String) throws -> WeatherCache? {
+        // Fetch all and filter in Swift (case-insensitive)
+        let descriptor = FetchDescriptor<WeatherCacheModel>()
+        let allCaches = try modelContext.fetch(descriptor)
+
+        let lowercasedName = cityName.lowercased()
+        guard let model = allCaches.first(where: { $0.cityName.lowercased() == lowercasedName }) else {
+            return nil
+        }
+
+        return model.toWeatherCache()
+    }
+
+    /// Clear expired weather caches
+    /// - Parameter olderThanMinutes: Remove caches older than this many minutes
+    /// - Throws: SwiftData errors
+    public func clearExpiredCaches(olderThanMinutes: Int) throws {
+        let expirationDate = Date().addingTimeInterval(-TimeInterval(olderThanMinutes * 60))
+
+        let descriptor = FetchDescriptor<WeatherCacheModel>()
+        let allCaches = try modelContext.fetch(descriptor)
+
+        // Filter expired caches
+        let expiredCaches = allCaches.filter { $0.lastUpdated < expirationDate }
+
+        for cache in expiredCaches {
+            modelContext.delete(cache)
+        }
+
+        try modelContext.save()
+    }
+
+    /// Clear all weather caches
+    /// - Throws: SwiftData errors
+    public func clearAllCaches() throws {
+        let descriptor = FetchDescriptor<WeatherCacheModel>()
+        let models = try modelContext.fetch(descriptor)
+
+        for model in models {
+            modelContext.delete(model)
+        }
+
+        try modelContext.save()
+    }
 }
 
 // MARK: - Model Container Factory
@@ -197,7 +294,8 @@ extension SwiftDataManager {
     nonisolated public static func createPersistentContainer() throws -> ModelContainer {
         let schema = Schema([
             FavoriteCityModel.self,
-            SearchHistoryModel.self
+            SearchHistoryModel.self,
+            WeatherCacheModel.self
         ])
 
         let configuration = ModelConfiguration(
@@ -217,7 +315,8 @@ extension SwiftDataManager {
     nonisolated public static func createInMemoryContainer() throws -> ModelContainer {
         let schema = Schema([
             FavoriteCityModel.self,
-            SearchHistoryModel.self
+            SearchHistoryModel.self,
+            WeatherCacheModel.self
         ])
 
         let configuration = ModelConfiguration(

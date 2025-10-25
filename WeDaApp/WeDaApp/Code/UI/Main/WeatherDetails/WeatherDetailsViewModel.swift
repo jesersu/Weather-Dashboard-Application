@@ -22,6 +22,7 @@ final class WeatherDetailsViewModel: ObservableObject {
     @Published private(set) var isLoading = false
     @Published var error: APIError?
     @Published var isFavorite = false
+    @Published var isShowingCachedData = false
 
     // MARK: - Properties
 
@@ -88,10 +89,21 @@ final class WeatherDetailsViewModel: ObservableObject {
     // MARK: - Public Methods
 
     /// Fetch current weather and 5-day forecast
+    /// Checks cache first for instant loading, then fetches fresh data from API
     func fetchWeatherData() async {
         isLoading = true
         error = nil
+        isShowingCachedData = false
 
+        // Try to load from cache first for instant display
+        if let cachedWeather = loadFromCache() {
+            currentWeather = cachedWeather.current
+            forecast = cachedWeather.forecast
+            isShowingCachedData = true
+            LogInfo("Loaded cached weather for \(city) (age: \(cachedWeather.ageMinutes) min)")
+        }
+
+        // Fetch fresh data from API
         do {
             LogInfo("Fetching weather details for: \(city)")
 
@@ -102,14 +114,23 @@ final class WeatherDetailsViewModel: ObservableObject {
 
             currentWeather = weather
             forecast = forecastData
+            isShowingCachedData = false
+
+            // Save to cache for next time
+            saveToCache(current: weather, forecast: forecastData)
 
             LogInfo("Successfully fetched weather details for \(city)")
 
         } catch let apiError as APIError {
-            error = apiError
+            // If we have cached data, keep showing it
+            if currentWeather == nil {
+                error = apiError
+            }
             LogError("Failed to fetch weather details: \(apiError.message)")
         } catch {
-            self.error = .unknownError
+            if currentWeather == nil {
+                self.error = .unknownError
+            }
             LogError("Unknown error: \(error)")
         }
 
@@ -195,6 +216,67 @@ final class WeatherDetailsViewModel: ObservableObject {
     func retry() {
         Task {
             await fetchWeatherData()
+        }
+    }
+
+    // MARK: - Cache Methods
+
+    /// Load weather from cache
+    /// - Returns: Tuple with current weather, forecast, and age in minutes
+    private func loadFromCache() -> (current: WeatherData, forecast: ForecastResponse?, ageMinutes: Int)? {
+        do {
+            guard let cache = try storageService.getWeatherCache(cityName: city) else {
+                return nil
+            }
+
+            // Decode current weather
+            let currentData = cache.currentWeatherJSON.data(using: .utf8)!
+            let current = try JSONDecoder().decode(WeatherData.self, from: currentData)
+
+            // Decode forecast if available
+            var forecastData: ForecastResponse?
+            if let forecastJSON = cache.forecastJSON,
+               let data = forecastJSON.data(using: .utf8) {
+                forecastData = try? JSONDecoder().decode(ForecastResponse.self, from: data)
+            }
+
+            return (current, forecastData, cache.ageInMinutes)
+
+        } catch {
+            LogError("Failed to load cache for \(city): \(error)")
+            return nil
+        }
+    }
+
+    /// Save weather to cache
+    /// - Parameters:
+    ///   - current: Current weather data
+    ///   - forecast: Forecast data (optional)
+    private func saveToCache(current: WeatherData, forecast: ForecastResponse?) {
+        do {
+            // Encode current weather
+            let currentData = try JSONEncoder().encode(current)
+            let currentJSON = String(data: currentData, encoding: .utf8)!
+
+            // Encode forecast if available
+            var forecastJSON: String?
+            if let forecast = forecast {
+                let forecastData = try JSONEncoder().encode(forecast)
+                forecastJSON = String(data: forecastData, encoding: .utf8)
+            }
+
+            // Save cache
+            let cache = WeatherCache(
+                cityName: city,
+                currentWeatherJSON: currentJSON,
+                forecastJSON: forecastJSON
+            )
+            try storageService.saveWeatherCache(cache)
+
+            LogInfo("Saved weather cache for \(city)")
+
+        } catch {
+            LogError("Failed to save cache for \(city): \(error)")
         }
     }
 }

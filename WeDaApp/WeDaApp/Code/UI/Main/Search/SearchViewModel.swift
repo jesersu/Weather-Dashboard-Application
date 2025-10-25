@@ -116,8 +116,11 @@ final class SearchViewModel: ObservableObject {
             weatherData = weather
             isLocationWeather = false
 
-            // Cache weather data for offline use
+            // Cache weather data for offline use (legacy cache)
             cacheWeather(weather)
+
+            // Save to SwiftData cache with forecast
+            await saveWeatherToCache(city: weather.name)
 
             // Add to search history
             let historyItem = SearchHistoryItem(
@@ -304,8 +307,11 @@ final class SearchViewModel: ObservableObject {
             // Keep search text empty for location weather - user can search manually if needed
             hideSuggestions() // Prevent autocomplete from triggering
 
-            // Cache weather data for offline use
+            // Cache weather data for offline use (legacy cache)
             cacheWeather(weather)
+
+            // Save to SwiftData cache with forecast
+            await saveWeatherToCache(city: weather.name)
 
             // Add to search history
             let historyItem = SearchHistoryItem(
@@ -386,6 +392,37 @@ final class SearchViewModel: ObservableObject {
             LogInfo("Loaded cached weather data")
         } catch {
             LogError("Failed to decode cached weather: \(error)")
+        }
+    }
+
+    /// Save weather with forecast to SwiftData cache
+    /// - Parameter city: City name to fetch forecast for
+    private func saveWeatherToCache(city: String) async {
+        guard let currentWeather = weatherData else { return }
+
+        do {
+            // Fetch forecast data
+            let forecast = try await weatherService.fetchForecast(city: city)
+
+            // Encode data
+            let currentData = try JSONEncoder().encode(currentWeather)
+            let currentJSON = String(data: currentData, encoding: .utf8)!
+
+            let forecastData = try JSONEncoder().encode(forecast)
+            let forecastJSON = String(data: forecastData, encoding: .utf8)
+
+            // Save to cache
+            let cache = WeatherCache(
+                cityName: city,
+                currentWeatherJSON: currentJSON,
+                forecastJSON: forecastJSON
+            )
+            try storageService.saveWeatherCache(cache)
+
+            LogInfo("Saved weather cache with forecast for \(city)")
+
+        } catch {
+            LogError("Failed to save weather cache: \(error)")
         }
     }
 }
