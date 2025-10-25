@@ -160,6 +160,34 @@ enum AppGradients {
         startPoint: .top,
         endPoint: .bottom
     )
+
+    static let navigationBar = LinearGradient(
+        colors: [AppColors.gradient1.opacity(0.9), AppColors.gradient2.opacity(0.9)],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    )
+}
+
+// MARK: - Navigation Styling
+
+enum NavigationStyling {
+    // Back Button
+    static let backButtonSize: CGFloat = 40
+    static let backButtonGradient = LinearGradient(
+        colors: [AppColors.gradient1, AppColors.gradient2],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    )
+
+    // Search Bar
+    static let searchBarHeight: CGFloat = 44
+    static let searchBarCornerRadius: CGFloat = 16
+    static let searchBarBorderWidth: CGFloat = 2
+    static let searchBarGradientBorder = LinearGradient(
+        colors: [AppColors.gradient1.opacity(0.5), AppColors.gradient2.opacity(0.5)],
+        startPoint: .leading,
+        endPoint: .trailing
+    )
 }
 
 // MARK: - View Modifier Extensions

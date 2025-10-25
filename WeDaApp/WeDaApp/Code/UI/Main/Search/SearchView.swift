@@ -11,48 +11,47 @@ import DollarGeneralTemplateHelpers
 
 struct SearchView: View {
 
-    @StateObject private var viewModel = SearchViewModel()
+    @ObservedObject var viewModel: SearchViewModel
 
     var body: some View {
         NavigationStack {
-            ZStack(alignment: .top) {
-                // Main content
-                contentView
+            VStack(spacing: 0) {
+                // Custom inline search bar
+                CustomSearchBar(
+                    text: $viewModel.searchText,
+                    placeholder: L10n.Search.placeholder,
+                    onSubmit: {
+                        viewModel.hideSuggestions()
+                        Task {
+                            await viewModel.search(city: viewModel.searchText)
+                        }
+                    },
+                    onClear: {
+                        viewModel.clearSearch()
+                    }
+                )
+                .padding(.horizontal, AppSpacing.md)
+                .padding(.vertical, AppSpacing.sm)
+                .background(Color(.systemGroupedBackground).opacity(0.5))
 
-                // Autocomplete overlay
-                if viewModel.showSuggestions && !viewModel.citySuggestions.isEmpty {
-                    CitySuggestionsOverlay(
-                        suggestions: viewModel.citySuggestions,
-                        onSelect: { viewModel.selectSuggestion($0) }
-                    )
+                // Main content with autocomplete overlay
+                ZStack(alignment: .top) {
+                    contentView
+
+                    // Autocomplete overlay
+                    if viewModel.showSuggestions && !viewModel.citySuggestions.isEmpty {
+                        CitySuggestionsOverlay(
+                            suggestions: viewModel.citySuggestions,
+                            onSelect: { viewModel.selectSuggestion($0) }
+                        )
+                    }
                 }
             }
             .navigationTitle(L10n.Search.title)
-            .searchable(
-                text: $viewModel.searchText,
-                placement: .navigationBarDrawer(displayMode: .always),
-                prompt: L10n.Search.placeholder
-            )
-            .onSubmit(of: .search) {
-                viewModel.hideSuggestions()
-                Task {
-                    await viewModel.search(city: viewModel.searchText)
-                }
-            }
+            .navigationBarTitleDisplayMode(.large)
+            .customNavigationBar()
             .onChange(of: viewModel.searchText) { oldValue, newValue in
                 viewModel.searchCities(query: newValue)
-            }
-            .toolbar {
-                if viewModel.weatherData != nil && !viewModel.isLocationWeather {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button {
-                            viewModel.clearSearch()
-                        } label: {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundColor(.secondary)
-                        }
-                    }
-                }
             }
             .task {
                 await viewModel.loadLocationWeatherIfNeeded()
@@ -233,5 +232,5 @@ private struct CitySuggestionRow: View {
 // MARK: - Preview
 
 #Preview {
-    SearchView()
+    SearchView(viewModel: SearchViewModel())
 }

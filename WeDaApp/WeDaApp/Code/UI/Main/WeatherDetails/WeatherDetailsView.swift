@@ -54,15 +54,32 @@ struct WeatherDetailsView: View {
         }
         .navigationTitle(viewModel.city)
         .navigationBarTitleDisplayMode(.large)
+        .navigationBarBackButtonHidden(true)
+        .customNavigationBar()
         .toolbar {
-            Button {
-                viewModel.toggleFavorite()
-            } label: {
-                Image(systemName: viewModel.isFavorite ? "star.fill" : "star")
-                    .foregroundColor(viewModel.isFavorite ? .yellow : .gray)
+            // Custom back button
+            ToolbarItem(placement: .navigationBarLeading) {
+                CustomBackButton()
             }
-            .accessibilityIdentifier(UITestIDs.WeatherDetailsView.favoriteButton.rawValue)
-            .accessibilityLabel(viewModel.isFavorite ? "Remove from favorites" : "Add to favorites")
+
+            // Favorite button
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    viewModel.toggleFavorite()
+                } label: {
+                    ZStack {
+                        Circle()
+                            .fill(Color.white.opacity(0.3))
+                            .frame(width: 36, height: 36)
+
+                        Image(systemName: viewModel.isFavorite ? "star.fill" : "star")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundColor(viewModel.isFavorite ? .yellow : .white)
+                    }
+                }
+                .accessibilityIdentifier(UITestIDs.WeatherDetailsView.favoriteButton.rawValue)
+                .accessibilityLabel(viewModel.isFavorite ? "Remove from favorites" : "Add to favorites")
+            }
         }
         .task {
             if viewModel.currentWeather == nil {
