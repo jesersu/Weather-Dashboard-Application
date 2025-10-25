@@ -9,21 +9,30 @@
 import SwiftUI
 
 struct MainTabView: View {
+
+    // MARK: - ViewModels
+    // Create ViewModels once at parent level - they persist across tab switches
+    // This prevents view recreation and unwanted side effects (e.g., location refetch)
+    @StateObject private var searchViewModel = SearchViewModel()
+    @StateObject private var favoritesViewModel = FavoritesViewModel()
+    @StateObject private var historyViewModel = HistoryViewModel()
+    @StateObject private var mapViewModel = WeatherMapViewModel()
+
     var body: some View {
         CustomTabBarView { tabId in
             switch tabId {
             case TabBarItem.search.id:
-                SearchView()
+                SearchView(viewModel: searchViewModel)
 
             case TabBarItem.favorites.id:
-                FavoritesView()
+                FavoritesView(viewModel: favoritesViewModel)
 
             case TabBarItem.history.id:
-                HistoryView()
+                HistoryView(viewModel: historyViewModel)
 
             case TabBarItem.map.id:
                 NavigationStack {
-                    WeatherMapView()
+                    WeatherMapView(viewModel: mapViewModel)
                 }
 
             default:

@@ -24,7 +24,7 @@ import MapKit
 /// - Clouds: Cloud coverage
 struct WeatherMapView: View {
 
-    @StateObject private var viewModel = WeatherMapViewModel()
+    @ObservedObject var viewModel: WeatherMapViewModel
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -186,6 +186,6 @@ struct MapViewRepresentable: UIViewRepresentable {
 
 #Preview {
     NavigationStack {
-        WeatherMapView()
+        WeatherMapView(viewModel: WeatherMapViewModel())
     }
 }

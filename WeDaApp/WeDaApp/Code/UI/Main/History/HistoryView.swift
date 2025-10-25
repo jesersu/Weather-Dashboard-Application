@@ -12,7 +12,8 @@ import DollarGeneralTemplateHelpers
 
 struct HistoryView: View {
 
-    @StateObject private var viewModel = HistoryViewModel()
+    @ObservedObject var viewModel: HistoryViewModel
+    @State private var selectedCity: String?
 
     var body: some View {
         NavigationStack {
@@ -36,8 +37,8 @@ struct HistoryView: View {
                 } else {
                     List {
                         ForEach(viewModel.history) { item in
-                            NavigationLink {
-                                WeatherDetailsView(city: item.cityName)
+                            Button {
+                                selectedCity = item.cityName
                             } label: {
                                 HistoryItemView(item: item)
                             }
@@ -61,6 +62,9 @@ struct HistoryView: View {
                     .accessibilityIdentifier(UITestIDs.HistoryView.scrollView.rawValue)
                 }
             }
+            .navigationDestination(item: $selectedCity) { city in
+                WeatherDetailsView(city: city)
+            }
             .navigationTitle("History")
             .toolbar {
                 if !viewModel.history.isEmpty {
@@ -80,24 +84,41 @@ private struct HistoryItemView: View {
     let item: SearchHistoryItem
 
     var body: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 4) {
+        HStack(spacing: AppSpacing.md) {
+            // Gradient Clock Badge
+            ZStack {
+                Circle()
+                    .fill(AppGradients.primary)
+                    .frame(width: 40, height: 40)
+
+                Image(systemName: "clock.fill")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(.white)
+            }
+            .shadow(color: AppShadow.small.color,
+                    radius: AppShadow.small.radius,
+                    x: AppShadow.small.x,
+                    y: AppShadow.small.y)
+
+            // Content
+            VStack(alignment: .leading, spacing: AppSpacing.xs) {
                 Text(item.cityName)
-                    .font(.headline)
+                    .font(AppTypography.headline)
                     .foregroundColor(.primary)
 
-                HStack {
+                HStack(spacing: AppSpacing.xs) {
                     if let country = item.country {
                         Text(country)
-                            .font(.subheadline)
+                            .font(AppTypography.subheadline)
+                            .foregroundColor(.secondary)
+
+                        Text("•")
+                            .font(AppTypography.subheadline)
                             .foregroundColor(.secondary)
                     }
 
-                    Text("•")
-                        .foregroundColor(.secondary)
-
                     Text(timeAgoString)
-                        .font(.caption)
+                        .font(AppTypography.subheadline)
                         .foregroundColor(.secondary)
                 }
             }
@@ -105,22 +126,33 @@ private struct HistoryItemView: View {
             Spacer()
 
             Image(systemName: "chevron.right")
+                .font(.system(size: 14, weight: .semibold))
                 .foregroundColor(.secondary)
         }
-        .padding()
+        .padding(AppSpacing.md)
         .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.secondarySystemBackground))
+            RoundedRectangle(cornerRadius: AppRadius.medium)
+                .fill(Color(.systemBackground))
         )
+        .overlay(
+            RoundedRectangle(cornerRadius: AppRadius.medium)
+                .strokeBorder(AppGradients.primary.opacity(0.3), lineWidth: 2)
+        )
+        .shadow(color: AppShadow.medium.color,
+                radius: AppShadow.medium.radius,
+                x: AppShadow.medium.x,
+                y: AppShadow.medium.y)
     }
+
+    // MARK: - Computed Properties
 
     private var timeAgoString: String {
         let formatter = RelativeDateTimeFormatter()
-        formatter.unitsStyle = .short
-        return formatter.localizedString(for: item.searchedAt, relativeTo: Date())
+        formatter.unitsStyle = .abbreviated
+        return "Searched " + formatter.localizedString(for: item.searchedAt, relativeTo: Date())
     }
 }
 
 #Preview {
-    HistoryView()
+    HistoryView(viewModel: HistoryViewModel())
 }

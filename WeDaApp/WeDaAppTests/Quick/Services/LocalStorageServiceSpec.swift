@@ -20,10 +20,7 @@ final class LocalStorageServiceSpec: QuickSpec {
             let testHistoryKey = "test_searchHistory"
 
             beforeEach {
-                localStorageService = LocalStorageService(
-                    favoritesKey: testFavoritesKey,
-                    historyKey: testHistoryKey
-                )
+                localStorageService = LocalStorageService
                 // Clear any existing test data
                 DollarGeneralPersist.removeCache(key: testFavoritesKey)
                 DollarGeneralPersist.removeCache(key: testHistoryKey)
