@@ -25,42 +25,14 @@ struct CustomTabBarView<Content: View>: View {
     }
 
     var body: some View {
-        // Tab content with slide transition
+        // Tab content - state preserved across tab switches
         content(selectedTab)
-            .id(selectedTab) // Force view recreation for smooth transition
-            .transition(.asymmetric(
-                insertion: .move(edge: selectedTabEdge).combined(with: .opacity),
-                removal: .move(edge: selectedTabEdge.opposite).combined(with: .opacity)
-            ))
             .safeAreaInset(edge: .bottom, spacing: 0) {
                 // Custom tab bar as safe area inset (pushes content up automatically)
                 CustomTabBar(tabs: tabs, selectedTab: $selectedTab)
             }
             .animation(.easeInOut(duration: 0.25), value: selectedTab)
             .ignoresSafeArea(.keyboard) // Prevent tab bar from moving with keyboard
-    }
-
-    /// Determine which edge to slide in from based on tab order
-    private var selectedTabEdge: Edge {
-        guard let currentIndex = tabs.firstIndex(where: { $0.id == selectedTab }),
-              let previousIndex = tabs.firstIndex(where: { $0.id == selectedTab }) else {
-            return .leading
-        }
-
-        return currentIndex > previousIndex ? .trailing : .leading
-    }
-}
-
-// MARK: - Edge Extension
-
-private extension Edge {
-    var opposite: Edge {
-        switch self {
-        case .top: return .bottom
-        case .bottom: return .top
-        case .leading: return .trailing
-        case .trailing: return .leading
-        }
     }
 }
 
