@@ -119,6 +119,7 @@ private struct SearchResultsView: View {
                 .padding(.horizontal, AppSpacing.md)
             }
             .padding(.top, 8)
+            .padding(.bottom, 100)
         }
         .accessibilityIdentifier(UITestIDs.SearchView.resultsScrollView.rawValue)
     }

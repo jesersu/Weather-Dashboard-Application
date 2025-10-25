@@ -18,53 +18,62 @@ public struct WeatherCard: View {
     }
 
     public var body: some View {
-        VStack(spacing: AppSpacing.lg) {
-            // City name and country
-            VStack(spacing: AppSpacing.xs) {
-                Text(weatherData.name)
-                    .font(AppTypography.largeTitle)
+        VStack(spacing: AppSpacing.sm) {
+            
+            HStack(alignment: .center){
+                // City name and country
+                VStack(spacing: AppSpacing.xs) {
+                    Text(weatherData.name)
+                        .font(AppTypography.largeTitle)
 
-                if let country = weatherData.sys.country {
-                    Text(country)
-                        .font(AppTypography.caption)
-                        .foregroundColor(.secondary)
-                }
-            }
-
-            // Weather icon and description
-            // OPTIMIZATION: Using CachedAsyncImage instead of AsyncImage
-            // Benefits: Reduces network calls, improves scroll performance, saves bandwidth
-            if let weather = weatherData.weather.first {
-                VStack(spacing: AppSpacing.md) {
-                    CachedAsyncImage(url: weather.iconURL) { image in
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                    } placeholder: {
-                        ProgressView()
+                    if let country = weatherData.sys.country {
+                        Text(country)
+                            .font(AppTypography.caption)
+                            .foregroundColor(.secondary)
                     }
-                    .frame(width: 120, height: 120)
+                    
+                    // Weather icon and description
+                    // OPTIMIZATION: Using CachedAsyncImage instead of AsyncImage
+                    // Benefits: Reduces network calls, improves scroll performance, saves bandwidth
+                    if let weather = weatherData.weather.first {
+                        ZStack(alignment: .bottom) {
+                            CachedAsyncImage(url: weather.iconURL) { image in
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                            } placeholder: {
+                                ProgressView()
+                            }
+                            .frame(width: 120)
 
-                    Text(weather.description.capitalized)
-                        .font(AppTypography.headline)
+                            Text(weather.description.capitalized)
+                                .font(AppTypography.headline)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .center)
+                
+                VStack(spacing: AppSpacing.sm ){
+                    // Temperature
+                    Text("\(Int(weatherData.main.temp))°C")
+                        .font(AppTypography.weatherTemp)
+
+                    // Feels like
+                    Text("\(L10n.Weather.feelsLike) \(Int(weatherData.main.feelsLike))°C")
+                        .font(AppTypography.body)
                         .foregroundColor(.secondary)
                 }
+                .frame(maxWidth: .infinity, alignment: .center)
             }
-
-            // Temperature
-            Text("\(Int(weatherData.main.temp))°C")
-                .font(AppTypography.weatherTemp)
-
-            // Feels like
-            Text("\(L10n.Weather.feelsLike) \(Int(weatherData.main.feelsLike))°C")
-                .font(AppTypography.body)
-                .foregroundColor(.secondary)
+  
 
             Divider()
                 .padding(.vertical, AppSpacing.sm)
 
             // Weather details grid
             LazyVGrid(columns: [
+                GridItem(.flexible()),
                 GridItem(.flexible()),
                 GridItem(.flexible())
             ], spacing: AppSpacing.lg) {

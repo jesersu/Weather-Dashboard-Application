@@ -79,7 +79,7 @@ struct WeatherMapView: View {
                     .padding(.horizontal)
                     .padding(.bottom, 8)
             }
-            .padding(.bottom, 20)
+            .padding(.bottom, 120)
         }
         .navigationTitle("Weather Map")
         .navigationBarTitleDisplayMode(.inline)

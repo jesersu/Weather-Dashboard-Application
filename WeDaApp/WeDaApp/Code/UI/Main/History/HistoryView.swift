@@ -54,6 +54,10 @@ struct HistoryView: View {
                     }
                     .listStyle(.plain)
                     .scrollContentBackground(.hidden)
+                    .safeAreaInset(edge: .bottom) {
+                        Spacer()
+                            .frame(height: 100)
+                    }
                     .accessibilityIdentifier(UITestIDs.HistoryView.scrollView.rawValue)
                 }
             }

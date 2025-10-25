@@ -46,6 +46,7 @@ struct FavoritesView: View {
                             }
                         }
                         .padding()
+                        .padding(.bottom, 100)
                     }
                     .accessibilityIdentifier(UITestIDs.FavoritesView.scrollView.rawValue)
                 }
