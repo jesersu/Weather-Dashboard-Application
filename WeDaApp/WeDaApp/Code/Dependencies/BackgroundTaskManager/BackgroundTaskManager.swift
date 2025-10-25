@@ -15,6 +15,10 @@ import DollarGeneralPersist
 ///
 /// **Purpose**: Fetch weather data for favorite cities in the background to keep data fresh
 ///
+/// **⚠️ REQUIRED CONFIGURATION** (see BACKGROUND_TASKS_SETUP.md):
+/// 1. Add `BGTaskSchedulerPermittedIdentifiers` to Info.plist with value: `com.dollarg.wedaapp.refresh`
+/// 2. Enable "Background Modes" capability in Xcode (Background fetch + Background processing)
+///
 /// **iOS Background Tasks**:
 /// - Uses BGTaskScheduler (iOS 13+) for battery-efficient background refresh
 /// - System decides when to run based on usage patterns, battery level, network
@@ -32,6 +36,11 @@ import DollarGeneralPersist
 /// // Simulate background fetch in debugger:
 /// e -l objc -- (void)[[BGTaskScheduler sharedScheduler] _simulateLaunchForTaskWithIdentifier:@"com.dollarg.wedaapp.refresh"]
 /// ```
+///
+/// **Troubleshooting**:
+/// - Error 3 (NotPermitted): Missing configuration - see BACKGROUND_TASKS_SETUP.md
+/// - Error 1 (Unavailable): iOS version < 13 or unsupported simulator
+/// - Error 2 (TooMany): More than 10 pending requests
 @MainActor
 final class BackgroundTaskManager {
 
@@ -80,6 +89,11 @@ final class BackgroundTaskManager {
     /// **Returns**: `true` if scheduled successfully, `false` if scheduling failed
     ///
     /// **Note**: BGTaskScheduler may fail on simulator or if background modes not enabled
+    ///
+    /// **Common Errors**:
+    /// - Error 3 (NotPermitted): Missing BGTaskSchedulerPermittedIdentifiers or Background Modes
+    /// - Error 1 (Unavailable): Running on unsupported iOS version
+    /// - Error 2 (TooManyPendingTaskRequests): Too many pending requests (limit: ~10)
     @discardableResult
     func scheduleBackgroundRefresh() -> Bool {
         let request = BGAppRefreshTaskRequest(identifier: Self.backgroundRefreshTaskIdentifier)
@@ -91,6 +105,52 @@ final class BackgroundTaskManager {
             try BGTaskScheduler.shared.submit(request)
             LogInfo("✅ Scheduled background refresh for \(request.earliestBeginDate?.description ?? "unknown")")
             return true
+        } catch let error as NSError {
+            // Provide detailed error information
+            let errorCode = error.code
+            let errorMessage: String
+
+            switch errorCode {
+            case 3: // BGTaskSchedulerErrorCodeNotPermitted
+                errorMessage = """
+                ❌ Background task NOT PERMITTED (Error 3)
+
+                This means your Xcode project is missing required configuration.
+
+                📋 REQUIRED FIXES:
+                1. Add BGTaskSchedulerPermittedIdentifiers to Info.plist/Target Settings
+                   - Key: BGTaskSchedulerPermittedIdentifiers (Array)
+                   - Value: com.dollarg.wedaapp.refresh
+
+                2. Enable Background Modes capability in Xcode:
+                   - Target → Signing & Capabilities → + Capability
+                   - Add "Background Modes"
+                   - Check ✅ Background fetch
+                   - Check ✅ Background processing
+
+                📖 See BACKGROUND_TASKS_SETUP.md for step-by-step instructions
+                """
+
+            case 1: // BGTaskSchedulerErrorCodeUnavailable
+                errorMessage = """
+                ❌ Background tasks UNAVAILABLE (Error 1)
+                - iOS version too old (requires iOS 13+)
+                - Running on unsupported simulator configuration
+                """
+
+            case 2: // BGTaskSchedulerErrorCodeTooManyPendingTaskRequests
+                errorMessage = """
+                ❌ Too many pending task requests (Error 2)
+                - Maximum ~10 pending requests allowed
+                - Cancel old requests before scheduling new ones
+                """
+
+            default:
+                errorMessage = "❌ Failed to schedule background refresh: \(error.localizedDescription) (Error \(errorCode))"
+            }
+
+            LogError(errorMessage)
+            return false
         } catch {
             LogError("❌ Failed to schedule background refresh: \(error.localizedDescription)")
             return false
