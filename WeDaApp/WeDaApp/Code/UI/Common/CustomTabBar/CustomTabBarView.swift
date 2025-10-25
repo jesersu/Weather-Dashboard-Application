@@ -25,20 +25,19 @@ struct CustomTabBarView<Content: View>: View {
     }
 
     var body: some View {
-        ZStack(alignment: .bottom) {
-            // Tab content with slide transition
-            content(selectedTab)
-                .id(selectedTab) // Force view recreation for smooth transition
-                .transition(.asymmetric(
-                    insertion: .move(edge: selectedTabEdge).combined(with: .opacity),
-                    removal: .move(edge: selectedTabEdge.opposite).combined(with: .opacity)
-                ))
-
-            // Custom tab bar
-            CustomTabBar(tabs: tabs, selectedTab: $selectedTab)
-        }
-        .animation(.easeInOut(duration: 0.25), value: selectedTab)
-        .ignoresSafeArea(.keyboard) // Prevent tab bar from moving with keyboard
+        // Tab content with slide transition
+        content(selectedTab)
+            .id(selectedTab) // Force view recreation for smooth transition
+            .transition(.asymmetric(
+                insertion: .move(edge: selectedTabEdge).combined(with: .opacity),
+                removal: .move(edge: selectedTabEdge.opposite).combined(with: .opacity)
+            ))
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                // Custom tab bar as safe area inset (pushes content up automatically)
+                CustomTabBar(tabs: tabs, selectedTab: $selectedTab)
+            }
+            .animation(.easeInOut(duration: 0.25), value: selectedTab)
+            .ignoresSafeArea(.keyboard) // Prevent tab bar from moving with keyboard
     }
 
     /// Determine which edge to slide in from based on tab order
