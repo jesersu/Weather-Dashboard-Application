@@ -1,0 +1,23 @@
+# Xcode project files should have LF line endings and not be modified
+*.pbxproj text eol=lf
+*.xcworkspacedata text eol=lf
+*.xcscheme text eol=lf
+
+# Ensure these files are treated as text
+*.swift text
+*.h text
+*.m text
+*.mm text
+*.strings text
+*.plist text
+*.json text
+*.md text
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.pdf binary
+*.ttf binary
+*.otf binary
