@@ -35,25 +35,25 @@ final class WeatherServiceSpec: QuickSpec {
             describe("fetching current weather") {
                 context("when the API call succeeds") {
                     it("should return weather data for the specified city") {
-                        waitUntil(timeout: .seconds(5)) { done in
+                        await MainActor.run {
                             // Given
                             let mockWeather = WeatherServiceSpec.createMockWeatherData(cityName: "London")
                             mockAPIClient.result = mockWeather
+                        }
 
-                            // When
-                            Task { @MainActor in
-                                do {
-                                    let result = try await weatherService.fetchCurrentWeather(city: "London")
+                        // When
+                        do {
+                            let result = try await weatherService.fetchCurrentWeather(city: "London")
 
-                                    // Then
-                                    expect(result.name).to(equal("London"))
-                                    expect(result.main.temp).to(equal(15.0))
-                                    expect(result.weather.first?.description).to(equal("clear sky"))
-                                    done()
-                                } catch {
-                                    fail("Expected success but got error: \(error)")
-                                    done()
-                                }
+                            // Then
+                            await MainActor.run {
+                                expect(result.name).to(equal("London"))
+                                expect(result.main.temp).to(equal(15.0))
+                                expect(result.weather.first?.description).to(equal("clear sky"))
+                            }
+                        } catch {
+                            await MainActor.run {
+                                fail("Expected success but got error: \(error)")
                             }
                         }
                     }
@@ -61,23 +61,24 @@ final class WeatherServiceSpec: QuickSpec {
 
                 context("when the city is invalid") {
                     it("should throw an invalidCity error") {
-                        waitUntil(timeout: .seconds(5)) { done in
+                        await MainActor.run {
                             // Given
                             mockAPIClient.error = APIError.invalidCity
+                        }
 
-                            // When/Then
-                            Task { @MainActor in
-                                do {
-                                    _ = try await weatherService.fetchCurrentWeather(city: "InvalidCity")
-                                    fail("Expected invalidCity error to be thrown")
-                                    done()
-                                } catch let error as APIError {
-                                    expect(error).to(equal(APIError.invalidCity))
-                                    done()
-                                } catch {
-                                    fail("Expected APIError.invalidCity but got: \(error)")
-                                    done()
-                                }
+                        // When/Then
+                        do {
+                            _ = try await weatherService.fetchCurrentWeather(city: "InvalidCity")
+                            await MainActor.run {
+                                fail("Expected invalidCity error to be thrown")
+                            }
+                        } catch let error as APIError {
+                            await MainActor.run {
+                                expect(error).to(equal(APIError.invalidCity))
+                            }
+                        } catch {
+                            await MainActor.run {
+                                fail("Expected APIError.invalidCity but got: \(error)")
                             }
                         }
                     }
@@ -85,23 +86,24 @@ final class WeatherServiceSpec: QuickSpec {
 
                 context("when there is no internet connection") {
                     it("should throw a noInternetConnection error") {
-                        waitUntil(timeout: .seconds(5)) { done in
+                        await MainActor.run {
                             // Given
                             mockAPIClient.error = APIError.noInternetConnection
+                        }
 
-                            // When/Then
-                            Task { @MainActor in
-                                do {
-                                    _ = try await weatherService.fetchCurrentWeather(city: "London")
-                                    fail("Expected noInternetConnection error to be thrown")
-                                    done()
-                                } catch let error as APIError {
-                                    expect(error).to(equal(APIError.noInternetConnection))
-                                    done()
-                                } catch {
-                                    fail("Expected APIError.noInternetConnection but got: \(error)")
-                                    done()
-                                }
+                        // When/Then
+                        do {
+                            _ = try await weatherService.fetchCurrentWeather(city: "London")
+                            await MainActor.run {
+                                fail("Expected noInternetConnection error to be thrown")
+                            }
+                        } catch let error as APIError {
+                            await MainActor.run {
+                                expect(error).to(equal(APIError.noInternetConnection))
+                            }
+                        } catch {
+                            await MainActor.run {
+                                fail("Expected APIError.noInternetConnection but got: \(error)")
                             }
                         }
                     }
@@ -113,25 +115,25 @@ final class WeatherServiceSpec: QuickSpec {
             describe("fetching weather forecast") {
                 context("when the API call succeeds") {
                     it("should return 5-day forecast data with 40 items") {
-                        waitUntil(timeout: .seconds(5)) { done in
+                        await MainActor.run {
                             // Given
                             let mockForecast = WeatherServiceSpec.createMockForecastResponse(cityName: "Paris")
                             mockAPIClient.result = mockForecast
+                        }
 
-                            // When
-                            Task { @MainActor in
-                                do {
-                                    let result = try await weatherService.fetchForecast(city: "Paris")
+                        // When
+                        do {
+                            let result = try await weatherService.fetchForecast(city: "Paris")
 
-                                    // Then
-                                    expect(result.city.name).to(equal("Paris"))
-                                    expect(result.list.count).to(equal(40)) // 5 days * 8 (3-hour intervals)
-                                    expect(result.list.first?.pop).to(beGreaterThan(0))
-                                    done()
-                                } catch {
-                                    fail("Expected success but got error: \(error)")
-                                    done()
-                                }
+                            // Then
+                            await MainActor.run {
+                                expect(result.city.name).to(equal("Paris"))
+                                expect(result.list.count).to(equal(40)) // 5 days * 8 (3-hour intervals)
+                                expect(result.list.first?.pop).to(beGreaterThan(0))
+                            }
+                        } catch {
+                            await MainActor.run {
+                                fail("Expected success but got error: \(error)")
                             }
                         }
                     }
@@ -139,23 +141,24 @@ final class WeatherServiceSpec: QuickSpec {
 
                 context("when the city is invalid") {
                     it("should throw an invalidCity error") {
-                        waitUntil(timeout: .seconds(5)) { done in
+                        await MainActor.run {
                             // Given
                             mockAPIClient.error = APIError.invalidCity
+                        }
 
-                            // When/Then
-                            Task { @MainActor in
-                                do {
-                                    _ = try await weatherService.fetchForecast(city: "InvalidCity")
-                                    fail("Expected invalidCity error to be thrown")
-                                    done()
-                                } catch let error as APIError {
-                                    expect(error).to(equal(APIError.invalidCity))
-                                    done()
-                                } catch {
-                                    fail("Expected APIError.invalidCity but got: \(error)")
-                                    done()
-                                }
+                        // When/Then
+                        do {
+                            _ = try await weatherService.fetchForecast(city: "InvalidCity")
+                            await MainActor.run {
+                                fail("Expected invalidCity error to be thrown")
+                            }
+                        } catch let error as APIError {
+                            await MainActor.run {
+                                expect(error).to(equal(APIError.invalidCity))
+                            }
+                        } catch {
+                            await MainActor.run {
+                                fail("Expected APIError.invalidCity but got: \(error)")
                             }
                         }
                     }
@@ -167,25 +170,25 @@ final class WeatherServiceSpec: QuickSpec {
             describe("fetching weather by coordinates") {
                 context("when provided with valid coordinates") {
                     it("should return weather data for that location") {
-                        waitUntil(timeout: .seconds(5)) { done in
+                        await MainActor.run {
                             // Given
                             let mockWeather = WeatherServiceSpec.createMockWeatherData(cityName: "Tokyo")
                             mockAPIClient.result = mockWeather
+                        }
 
-                            // When
-                            Task { @MainActor in
-                                do {
-                                    let result = try await weatherService.fetchWeatherByCoordinates(lat: 35.6762, lon: 139.6503)
+                        // When
+                        do {
+                            let result = try await weatherService.fetchWeatherByCoordinates(lat: 35.6762, lon: 139.6503)
 
-                                    // Then
-                                    expect(result.name).to(equal("Tokyo"))
-                                    expect(result.coord.lat).to(equal(35.6762))
-                                    expect(result.coord.lon).to(equal(139.6503))
-                                    done()
-                                } catch {
-                                    fail("Expected success but got error: \(error)")
-                                    done()
-                                }
+                            // Then
+                            await MainActor.run {
+                                expect(result.name).to(equal("Tokyo"))
+                                expect(result.coord.lat).to(equal(35.6762))
+                                expect(result.coord.lon).to(equal(139.6503))
+                            }
+                        } catch {
+                            await MainActor.run {
+                                fail("Expected success but got error: \(error)")
                             }
                         }
                     }
