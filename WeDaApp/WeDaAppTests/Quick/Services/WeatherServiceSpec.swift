@@ -9,6 +9,7 @@
 import Quick
 import Nimble
 import NetworkingKit
+import DollarGeneralPersist
 @testable import WeDaApp
 
 @MainActor

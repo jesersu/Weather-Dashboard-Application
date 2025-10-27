@@ -8,6 +8,7 @@
 
 import XCTest
 import MapKit
+import DollarGeneralPersist
 @testable import WeDaApp
 
 @MainActor

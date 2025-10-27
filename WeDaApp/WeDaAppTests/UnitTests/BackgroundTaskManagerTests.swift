@@ -8,6 +8,7 @@
 
 import XCTest
 import BackgroundTasks
+import DollarGeneralPersist
 @testable import WeDaApp
 
 @MainActor

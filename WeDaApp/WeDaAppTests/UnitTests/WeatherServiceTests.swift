@@ -8,6 +8,7 @@
 
 import XCTest
 import NetworkingKit
+import DollarGeneralPersist
 @testable import WeDaApp
 
 @MainActor

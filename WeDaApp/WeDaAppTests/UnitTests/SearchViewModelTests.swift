@@ -375,8 +375,31 @@ class MockLocalStorageService: LocalStorageServiceProtocol {
         return history
     }
 
+    func removeHistoryItem(id: String) throws {
+        history.removeAll { $0.id == id }
+    }
+
     func clearHistory() throws {
         history.removeAll()
+    }
+
+    // MARK: - Weather Cache
+
+    func saveWeatherCache(_ cache: WeatherCache) throws {
+        // Mock implementation - no-op for tests
+    }
+
+    func getWeatherCache(cityName: String) throws -> WeatherCache? {
+        // Mock implementation - return nil
+        return nil
+    }
+
+    func clearExpiredCaches(olderThanMinutes: Int) throws {
+        // Mock implementation - no-op for tests
+    }
+
+    func clearAllCaches() throws {
+        // Mock implementation - no-op for tests
     }
 }
 
