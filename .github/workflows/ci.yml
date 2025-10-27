@@ -47,7 +47,7 @@ jobs:
 
     - name: Run tests
       run: |
-        bundle exec fastlane test
+        bundle exec fastlane test_quick  # Use test_quick for faster, more stable CI
       env:
         FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 120
 

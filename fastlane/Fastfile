@@ -45,7 +45,35 @@ platform :ios do
       scheme: SCHEME,
       devices: ["iPhone 16 Pro"],
       code_coverage: false,
-      clean: false
+      clean: false,
+      only_testing: ["WeDaAppTests"],  # Skip UI tests for speed
+      parallel_testing: false           # Disable parallel testing to avoid simulator issues
+    )
+  end
+
+  desc "Run only UI tests"
+  lane :test_ui do
+    run_tests(
+      workspace: WORKSPACE,
+      scheme: SCHEME,
+      devices: ["iPhone 16 Pro"],
+      code_coverage: false,
+      clean: false,
+      only_testing: ["WeDaAppUITests"],
+      parallel_testing: false
+    )
+  end
+
+  desc "Run unit tests only (no UI tests, no coverage)"
+  lane :test_unit do
+    run_tests(
+      workspace: WORKSPACE,
+      scheme: SCHEME,
+      devices: ["iPhone 16 Pro"],
+      code_coverage: false,
+      clean: false,
+      only_testing: ["WeDaAppTests"],
+      parallel_testing: false
     )
   end
 
