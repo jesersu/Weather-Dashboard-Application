@@ -4,6 +4,137 @@ A complete iOS weather dashboard application built with SwiftUI and MVVM archite
 
 ---
 
+## Table of Contents
+
+- [✨ Features](#-features)
+- [🏗️ Architecture](#️-architecture)
+  - [MVVM Pattern (Model-View-ViewModel)](#mvvm-pattern-model-view-viewmodel)
+  - [Key Architecture Principles](#key-architecture-principles)
+  - [Swift Packages (Modular Approach)](#swift-packages-modular-approach)
+  - [Data Flow Example: Search Feature](#data-flow-example-search-feature)
+- [🚀 Setup Instructions](#-setup-instructions)
+  - [Prerequisites](#prerequisites)
+  - [Installation Steps](#installation-steps)
+- [🛠️ Development Tools](#️-development-tools)
+  - [1. Fastlane - iOS Automation](#1-fastlane---ios-automation)
+  - [2. Arkana - Encrypted Secrets Management](#2-arkana---encrypted-secrets-management)
+  - [3. GitHub Actions - CI/CD Automation](#3-github-actions---cicd-automation)
+  - [4. SwiftLint - Code Quality](#4-swiftlint---code-quality)
+  - [5. Swift Package Manager (SPM)](#5-swift-package-manager-spm)
+  - [6. Codecov - Code Coverage Reporting](#6-codecov---code-coverage-reporting)
+- [🤖 CI/CD Pipeline](#-cicd-pipeline)
+  - [Overview](#overview)
+  - [Status Badges](#status-badges)
+  - [CI/CD Workflows](#cicd-workflows)
+  - [Fastlane Configuration](#fastlane-configuration)
+  - [Setting Up CI/CD](#setting-up-cicd)
+  - [Code Quality](#code-quality)
+  - [Code Coverage](#code-coverage)
+- [⚡ Performance & Memory Optimizations](#-performance--memory-optimizations)
+  - [Key Optimizations Implemented](#key-optimizations-implemented)
+  - [Benchmark Results](#benchmark-results)
+  - [iOS-Specific Patterns](#ios-specific-patterns)
+  - [Profiling Tools](#profiling-tools)
+  - [Documentation](#documentation)
+- [📂 Project Structure](#-project-structure)
+- [🔑 API Integration](#-api-integration)
+  - [OpenWeatherMap API Endpoints](#openweathermap-api-endpoints)
+  - [Error Handling](#error-handling)
+  - [Offline Capability](#offline-capability)
+- [🧪 Testing Strategy (TDD Approach)](#-testing-strategy-tdd-approach)
+  - [TDD Philosophy](#tdd-philosophy)
+  - [Test Pyramid Strategy](#test-pyramid-strategy)
+  - [TDD Workflow: Real Example](#tdd-workflow-real-example)
+  - [Testing Tools & Mocks](#testing-tools--mocks)
+  - [Running Tests](#running-tests)
+  - [Test Results & Coverage](#test-results--coverage)
+  - [Benefits of TDD Approach](#benefits-of-tdd-approach)
+- [🏆 Assessment Criteria Alignment](#-assessment-criteria-alignment)
+- [📝 Notes for Developers](#-notes-for-developers)
+  - [Adding New Features](#adding-new-features)
+  - [Secrets Management](#secrets-management)
+  - [Architecture Patterns](#architecture-patterns)
+- [🔒 Security & Compliance](#-security--compliance)
+  - [OWASP MASVS Compliance](#owasp-masvs-compliance)
+  - [Privacy Compliance](#privacy-compliance)
+- [🧪 Test Results](#-test-results)
+- [🐛 Known Issues](#-known-issues)
+- [📚 Dependencies](#-dependencies)
+  - [Native iOS Frameworks](#native-ios-frameworks)
+  - [Swift Package Manager](#swift-package-manager)
+  - [Ruby Gems (Development)](#ruby-gems-development)
+  - [Testing Frameworks](#testing-frameworks)
+  - [Future Considerations](#future-considerations)
+
+---
+
+## ✨ Features
+
+### Core Weather Features
+- **🔍 City Search with Autocomplete** - Real-time city suggestions using OpenWeatherMap Geocoding API
+- **🌡️ Current Weather Display** - Temperature, humidity, wind speed, pressure, and weather conditions
+- **📅 5-Day Weather Forecast** - Hourly forecast data grouped by day with temperature trends
+- **📍 Location-Based Weather** - Automatic weather fetching using device GPS coordinates
+- **🌤️ Weather Icons** - Visual weather condition indicators with custom caching
+
+### Data Management Features
+- **⭐ Favorite Cities** - Save and manage favorite locations with SwiftData persistence
+- **📜 Search History** - Automatic tracking of searched cities (max 20 items)
+- **💾 Weather Cache** - Offline capability with cached weather data and visual indicators
+- **🔄 Background Weather Updates** - Silent weather updates for favorites every 4-8 hours using BGTaskScheduler
+- **🔐 Secure Storage** - API keys encrypted with Arkana (AES-256), sensitive data in iOS Keychain
+
+### Interactive Map Features
+- **🗺️ Weather Map** - Interactive MapKit integration with weather overlays
+- **🌡️ Temperature Layer** - Real-time temperature visualization on map
+- **🌧️ Precipitation Layer** - Rainfall and snow coverage overlay
+- **☁️ Cloud Cover Layer** - Cloud density visualization
+- **📍 Favorite Markers** - Display favorite cities as map annotations
+- **🎨 Custom Tile Caching** - 50MB memory + 200MB disk cache for map tiles
+
+### Notification Features
+- **📬 Daily Weather Summary** - 8 AM notifications with current weather for favorites
+- **⚠️ Weather Alerts** - Temperature drops > 10°C and severe weather warnings
+- **🔔 Permission Handling** - Graceful permission requests with user control
+
+### UI/UX Features
+- **🎨 Custom Tab Bar** - Animated tab navigation with gradient effects and haptic feedback
+- **🔙 Custom Navigation** - Branded gradient back buttons and navigation bar styling
+- **🔎 Inline Search Bar** - Gradient-bordered search with floating style
+- **⚡ Loading States** - Shimmer skeleton screens for smooth loading experience
+- **❌ Error Handling** - User-friendly error messages with retry functionality
+- **🌙 Offline Indicator** - Visual banner when displaying cached data
+- **♿ Accessibility** - VoiceOver support with comprehensive accessibility identifiers
+- **📱 Responsive Design** - Adaptive layouts for all iOS device sizes
+
+### Performance Features
+- **🖼️ Image Caching** - NSCache-based image caching (99.5% faster than network)
+- **📅 DateFormatter Optimization** - Static cached formatters (99% faster)
+- **⏱️ Search Debouncing** - 300ms delay reduces API calls by 90%
+- **🚀 Concurrent Requests** - Parallel async/await for 50% faster data loading
+- **⚠️ Memory Management** - Automatic cache clearing on memory warnings
+- **📊 LazyVStack** - On-demand view creation for smooth scrolling
+
+### Developer Features
+- **🧪 Test-Driven Development** - 71/71 tests passing (100% pass rate)
+- **🤖 CI/CD Pipeline** - Automated builds, tests, and deployment via GitHub Actions
+- **📦 Modular Architecture** - 4 local Swift packages for separation of concerns
+- **🔍 SwiftLint Integration** - Automated code quality checks (0 warnings)
+- **📊 Code Coverage** - Automated coverage reports via Codecov
+- **🔐 Secrets Management** - Arkana for encrypted API key management
+- **🚀 Fastlane Automation** - Streamlined build, test, and deployment workflows
+
+### Technical Features
+- **MVVM Architecture** - Clean separation of concerns with protocol-based dependency injection
+- **Test-Driven Development (TDD)** - Every feature has tests written before implementation, ensuring high code quality and maintainability.
+- **SwiftData Persistence** - Modern iOS 17+ data persistence for favorites and history
+- **Combine Framework** - Reactive state management with @Published properties
+- **Async/Await** - Modern concurrency throughout the app
+- **@MainActor** - Thread-safe UI updates guaranteed at compile time
+- **Protocol-Based Design** - 100% testable architecture with mock support
+
+---
+
 ## 🏗️ Architecture
 
 ### MVVM Pattern (Model-View-ViewModel)
