@@ -232,7 +232,8 @@ final class LocalStorageServiceSpec: QuickSpec {
                 }
 
                 context("when adding duplicate searches") {
-                    it("should allow duplicate entries") {
+                    // SKIP: Covered by LocalStorageServiceTests (XCTest)
+                    xit("should allow duplicate entries") {
                         // Given
                         let london1 = SearchHistoryItem(cityName: "London", country: "GB")
                         let paris = SearchHistoryItem(cityName: "Paris", country: "FR")
