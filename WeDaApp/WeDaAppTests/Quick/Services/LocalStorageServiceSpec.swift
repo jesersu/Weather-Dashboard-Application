@@ -6,6 +6,7 @@
 //  Copyright © 2025 Dollar General. All rights reserved.
 //
 
+import Foundation
 import Quick
 import Nimble
 import DollarGeneralPersist
@@ -16,19 +17,21 @@ final class LocalStorageServiceSpec: QuickSpec {
     override class func spec() {
         describe("LocalStorageService") {
             var localStorageService: LocalStorageService!
-            let testFavoritesKey = "test_favoriteCities"
-            let testHistoryKey = "test_searchHistory"
 
             beforeEach {
-                localStorageService = LocalStorageService
-                // Clear any existing test data
-                DollarGeneralPersist.removeCache(key: testFavoritesKey)
-                DollarGeneralPersist.removeCache(key: testHistoryKey)
+                // Create an in-memory SwiftData container for test isolation
+                // Each test gets a fresh container, preventing data leakage between tests
+                let container = try! SwiftDataManager.createInMemoryContainer()
+                // Quick's beforeEach doesn't support async, so we use MainActor.assumeIsolated
+                let swiftDataManager = MainActor.assumeIsolated {
+                    SwiftDataManager(modelContainer: container)
+                }
+                localStorageService = MainActor.assumeIsolated {
+                    LocalStorageService(swiftDataManager: swiftDataManager)
+                }
             }
 
             afterEach {
-                DollarGeneralPersist.removeCache(key: testFavoritesKey)
-                DollarGeneralPersist.removeCache(key: testHistoryKey)
                 localStorageService = nil
             }
 
@@ -79,13 +82,14 @@ final class LocalStorageServiceSpec: QuickSpec {
                 context("when removing a favorite") {
                     it("should remove only the specified favorite") {
                         // Given
-                        let london = FavoriteCity(id: "london123", cityName: "London", country: "GB", coordinates: Coordinates(lon: -0.1257, lat: 51.5074))
+                        let londonId = UUID().uuidString  // Use valid UUID
+                        let london = FavoriteCity(id: londonId, cityName: "London", country: "GB", coordinates: Coordinates(lon: -0.1257, lat: 51.5074))
                         let paris = FavoriteCity(cityName: "Paris", country: "FR", coordinates: Coordinates(lon: 2.3522, lat: 48.8566))
                         try? localStorageService.saveFavorite(london)
                         try? localStorageService.saveFavorite(paris)
 
                         // When
-                        try? localStorageService.removeFavorite(id: "london123")
+                        try? localStorageService.removeFavorite(id: londonId)
                         let favorites = try? localStorageService.getFavorites()
 
                         // Then
@@ -164,10 +168,11 @@ final class LocalStorageServiceSpec: QuickSpec {
 
                 context("when adding multiple searches") {
                     it("should store them with the most recent first") {
-                        // Given
-                        let berlin = SearchHistoryItem(cityName: "Berlin", country: "DE")
-                        let madrid = SearchHistoryItem(cityName: "Madrid", country: "ES")
-                        let rome = SearchHistoryItem(cityName: "Rome", country: "IT")
+                        // Given - Use explicit timestamps to ensure proper ordering
+                        let now = Date()
+                        let berlin = SearchHistoryItem(cityName: "Berlin", country: "DE", searchedAt: now.addingTimeInterval(-20))
+                        let madrid = SearchHistoryItem(cityName: "Madrid", country: "ES", searchedAt: now.addingTimeInterval(-10))
+                        let rome = SearchHistoryItem(cityName: "Rome", country: "IT", searchedAt: now)
 
                         // When
                         try? localStorageService.addToHistory(berlin)
