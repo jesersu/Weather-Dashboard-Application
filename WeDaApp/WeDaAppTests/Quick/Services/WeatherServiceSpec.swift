@@ -35,7 +35,7 @@ final class WeatherServiceSpec: QuickSpec {
             describe("fetching current weather") {
                 context("when the API call succeeds") {
                     it("should return weather data for the specified city") {
-                        await waitUntil(timeout: .seconds(10)) { done in
+                        waitUntil(timeout: .seconds(10)) { done in
                             // Given
                             let mockWeather = WeatherServiceSpec.createMockWeatherData(cityName: "London")
                             mockAPIClient.result = mockWeather
@@ -65,7 +65,7 @@ final class WeatherServiceSpec: QuickSpec {
 
                 context("when the city is invalid") {
                     it("should throw an invalidCity error") {
-                        await waitUntil(timeout: .seconds(10)) { done in
+                        waitUntil(timeout: .seconds(10)) { done in
                             // Given
                             mockAPIClient.error = APIError.invalidCity
 
@@ -95,7 +95,7 @@ final class WeatherServiceSpec: QuickSpec {
 
                 context("when there is no internet connection") {
                     it("should throw a noInternetConnection error") {
-                        await waitUntil(timeout: .seconds(10)) { done in
+                        waitUntil(timeout: .seconds(10)) { done in
                             // Given
                             mockAPIClient.error = APIError.noInternetConnection
 
@@ -129,7 +129,7 @@ final class WeatherServiceSpec: QuickSpec {
             describe("fetching weather forecast") {
                 context("when the API call succeeds") {
                     it("should return 5-day forecast data with 40 items") {
-                        await waitUntil(timeout: .seconds(10)) { done in
+                        waitUntil(timeout: .seconds(10)) { done in
                             // Given
                             let mockForecast = WeatherServiceSpec.createMockForecastResponse(cityName: "Paris")
                             mockAPIClient.result = mockForecast
@@ -159,7 +159,7 @@ final class WeatherServiceSpec: QuickSpec {
 
                 context("when the city is invalid") {
                     it("should throw an invalidCity error") {
-                        await waitUntil(timeout: .seconds(10)) { done in
+                        waitUntil(timeout: .seconds(10)) { done in
                             // Given
                             mockAPIClient.error = APIError.invalidCity
 
@@ -193,7 +193,7 @@ final class WeatherServiceSpec: QuickSpec {
             describe("fetching weather by coordinates") {
                 context("when provided with valid coordinates") {
                     it("should return weather data for that location") {
-                        await waitUntil(timeout: .seconds(10)) { done in
+                        waitUntil(timeout: .seconds(10)) { done in
                             // Given
                             let mockWeather = WeatherServiceSpec.createMockWeatherData(cityName: "Tokyo")
                             mockAPIClient.result = mockWeather
