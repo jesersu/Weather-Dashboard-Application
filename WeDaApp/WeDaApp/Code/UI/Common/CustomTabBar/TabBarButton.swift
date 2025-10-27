@@ -17,13 +17,14 @@ struct TabBarButton: View {
     @State private var isPressed = false
 
     var body: some View {
-        Button(action: {
+        // swiftlint:disable:next multiple_closures_with_trailing_closure
+        Button {
             // Haptic feedback
             let impact = UIImpactFeedbackGenerator(style: .light)
             impact.impactOccurred()
 
             action()
-        }, label: {
+        } label: {
             VStack(spacing: 4) {
                 ZStack {
                     // Background circle for selected state
