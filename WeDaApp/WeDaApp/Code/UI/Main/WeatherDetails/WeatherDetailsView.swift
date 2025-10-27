@@ -10,7 +10,6 @@ import SwiftUI
 import DollarGeneralTemplateHelpers
 
 struct WeatherDetailsView: View {
-
     @StateObject private var viewModel: WeatherDetailsViewModel
 
     init(city: String) {

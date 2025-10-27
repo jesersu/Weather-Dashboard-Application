@@ -14,7 +14,6 @@ import SwiftData
 /// These tests define the expected behavior before implementation
 @MainActor
 final class SwiftDataModelsTests: XCTestCase {
-
     var container: ModelContainer!
     var context: ModelContext!
 

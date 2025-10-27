@@ -32,7 +32,6 @@ import MapKit
 /// mapView.addAnnotation(annotation)
 /// ```
 public final class WeatherAnnotation: NSObject, MKAnnotation {
-
     // MARK: - MKAnnotation Properties
 
     public let coordinate: CLLocationCoordinate2D

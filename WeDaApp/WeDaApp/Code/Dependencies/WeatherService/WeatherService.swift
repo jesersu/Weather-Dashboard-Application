@@ -19,7 +19,6 @@ public protocol WeatherServiceProtocol {
 
 /// Service for fetching weather data from OpenWeatherMap API
 public struct WeatherService: WeatherServiceProtocol {
-
     private let apiClient: APIClient
 
     public init(apiClient: APIClient = OpenWeatherMapAPIClient()) {

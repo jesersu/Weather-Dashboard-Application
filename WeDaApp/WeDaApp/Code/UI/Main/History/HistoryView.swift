@@ -11,7 +11,6 @@ import DollarGeneralPersist
 import DollarGeneralTemplateHelpers
 
 struct HistoryView: View {
-
     @ObservedObject var viewModel: HistoryViewModel
     @State private var selectedCity: String?
 

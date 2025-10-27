@@ -14,7 +14,6 @@ import DollarGeneralPersist
 
 @MainActor
 final class WeatherServiceSpec: QuickSpec {
-
     override class func spec() {
         describe("WeatherService") {
             var mockAPIClient: MockAPIClient!

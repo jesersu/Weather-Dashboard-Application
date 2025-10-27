@@ -13,7 +13,8 @@ import SwiftData
 /// Provides persistent storage with automatic change tracking
 @Model
 public final class FavoriteCityModel {
-    @Attribute(.unique) public var id: UUID
+    @Attribute(.unique)
+    public var id: UUID
     public var cityName: String
     public var country: String?
     public var latitude: Double

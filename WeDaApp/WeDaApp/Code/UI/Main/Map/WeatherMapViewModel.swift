@@ -13,7 +13,6 @@ import ArkanaKeys
 
 @MainActor
 final class WeatherMapViewModel: ObservableObject {
-
     // MARK: - Published Properties
 
     @Published var region: MKCoordinateRegion
@@ -83,7 +82,6 @@ final class WeatherMapViewModel: ObservableObject {
 
                     newAnnotations.append(annotation)
                     LogInfo("📍 Added annotation for \(weather.name)")
-
                 } catch {
                     LogError("❌ Failed to fetch weather for \(favorite.cityName): \(error.localizedDescription)")
                 }
@@ -98,7 +96,6 @@ final class WeatherMapViewModel: ObservableObject {
             }
 
             LogInfo("✅ Loaded \(newAnnotations.count) annotations")
-
         } catch {
             LogError("❌ Failed to load favorites: \(error.localizedDescription)")
         }
@@ -125,7 +122,10 @@ final class WeatherMapViewModel: ObservableObject {
     /// **Returns**: URL for OpenWeatherMap tile
     func getTileURL(for overlay: WeatherMapOverlay, z: Int, x: Int, y: Int) -> URL {
         let urlString = "https://tile.openweathermap.org/map/\(overlay.rawValue)/\(z)/\(x)/\(y).png?appid=\(apiKey)"
-        return URL(string: urlString)!
+        guard let url = URL(string: urlString) else {
+            fatalError("Invalid tile URL: \(urlString)")
+        }
+        return url
     }
 
     /// Center map on specific location

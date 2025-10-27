@@ -23,7 +23,6 @@ import MapKit
 /// - Precipitation: Rainfall intensity
 /// - Clouds: Cloud coverage
 struct WeatherMapView: View {
-
     @ObservedObject var viewModel: WeatherMapViewModel
 
     var body: some View {
@@ -93,7 +92,6 @@ struct WeatherMapView: View {
 
 /// UIViewRepresentable wrapper for MKMapView with custom tile overlay
 struct MapViewRepresentable: UIViewRepresentable {
-
     @Binding var region: MKCoordinateRegion
     let annotations: [WeatherAnnotation]
     let overlay: WeatherMapOverlay
@@ -128,7 +126,6 @@ struct MapViewRepresentable: UIViewRepresentable {
     // MARK: - Coordinator
 
     class Coordinator: NSObject, MKMapViewDelegate {
-
         // MARK: - Annotation Views
 
         func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {

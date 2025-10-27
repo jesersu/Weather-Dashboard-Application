@@ -14,7 +14,6 @@ import UIKit
 
 @MainActor
 final class WeatherDetailsViewModel: ObservableObject {
-
     // MARK: - Published Properties
 
     @Published private(set) var currentWeather: WeatherData?
@@ -120,7 +119,6 @@ final class WeatherDetailsViewModel: ObservableObject {
             saveToCache(current: weather, forecast: forecastData)
 
             LogInfo("Successfully fetched weather details for \(city)")
-
         } catch let apiError as APIError {
             // If we have cached data, keep showing it
             if currentWeather == nil {
@@ -221,16 +219,26 @@ final class WeatherDetailsViewModel: ObservableObject {
 
     // MARK: - Cache Methods
 
+    /// Cache result structure
+    private struct CacheResult {
+        let current: WeatherData
+        let forecast: ForecastResponse?
+        let ageMinutes: Int
+    }
+
     /// Load weather from cache
-    /// - Returns: Tuple with current weather, forecast, and age in minutes
-    private func loadFromCache() -> (current: WeatherData, forecast: ForecastResponse?, ageMinutes: Int)? {
+    /// - Returns: Cache result with current weather, forecast, and age in minutes
+    private func loadFromCache() -> CacheResult? {
         do {
             guard let cache = try storageService.getWeatherCache(cityName: city) else {
                 return nil
             }
 
             // Decode current weather
-            let currentData = cache.currentWeatherJSON.data(using: .utf8)!
+            guard let currentData = cache.currentWeatherJSON.data(using: .utf8) else {
+                LogError("Failed to convert currentWeatherJSON to data")
+                return nil
+            }
             let current = try JSONDecoder().decode(WeatherData.self, from: currentData)
 
             // Decode forecast if available
@@ -240,8 +248,7 @@ final class WeatherDetailsViewModel: ObservableObject {
                 forecastData = try? JSONDecoder().decode(ForecastResponse.self, from: data)
             }
 
-            return (current, forecastData, cache.ageInMinutes)
-
+            return CacheResult(current: current, forecast: forecastData, ageMinutes: cache.ageInMinutes)
         } catch {
             LogError("Failed to load cache for \(city): \(error)")
             return nil
@@ -256,7 +263,10 @@ final class WeatherDetailsViewModel: ObservableObject {
         do {
             // Encode current weather
             let currentData = try JSONEncoder().encode(current)
-            let currentJSON = String(data: currentData, encoding: .utf8)!
+            guard let currentJSON = String(data: currentData, encoding: .utf8) else {
+                LogError("Failed to convert current weather data to JSON string")
+                return
+            }
 
             // Encode forecast if available
             var forecastJSON: String?
@@ -274,7 +284,6 @@ final class WeatherDetailsViewModel: ObservableObject {
             try storageService.saveWeatherCache(cache)
 
             LogInfo("Saved weather cache for \(city)")
-
         } catch {
             LogError("Failed to save cache for \(city): \(error)")
         }

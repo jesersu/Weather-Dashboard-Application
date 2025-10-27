@@ -23,7 +23,7 @@ struct TabBarButton: View {
             impact.impactOccurred()
 
             action()
-        }) {
+        }, label: {
             VStack(spacing: 4) {
                 ZStack {
                     // Background circle for selected state
@@ -45,16 +45,16 @@ struct TabBarButton: View {
                         .font(.system(size: 24, weight: isSelected ? .semibold : .regular))
                         .foregroundStyle(
                             isSelected ?
-                            LinearGradient(
-                                colors: [.purple, .blue],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ) :
-                            LinearGradient(
-                                colors: [.gray, .gray],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
+                                LinearGradient(
+                                    colors: [.purple, .blue],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ) :
+                                LinearGradient(
+                                    colors: [.gray, .gray],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
                         )
                         .scaleEffect(isSelected ? 1.1 : 1.0)
                         .overlay(alignment: .topTrailing) {

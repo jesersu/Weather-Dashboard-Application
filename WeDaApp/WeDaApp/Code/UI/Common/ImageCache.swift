@@ -20,7 +20,6 @@ import Foundation
 /// - No manual cleanup required
 /// - Prevents redundant network calls for same images
 final class ImageCache {
-
     // MARK: - Singleton
 
     static let shared = ImageCache()
@@ -83,7 +82,8 @@ final class ImageCache {
     }
 
     /// Clear entire cache (called on memory warnings)
-    @objc func clearCache() {
+    @objc
+    func clearCache() {
         cache.removeAllObjects()
         print("🧹 ImageCache: Cleared all cached images due to memory warning")
     }
@@ -104,29 +104,29 @@ final class ImageCache {
  MOBILE OPTIMIZATION TECHNIQUES DEMONSTRATED:
 
  1. **NSCache over Dictionary**:
-    - Automatically manages memory under pressure
-    - Thread-safe without explicit locks
-    - Better for iOS/mobile than custom caching
+ - Automatically manages memory under pressure
+ - Thread-safe without explicit locks
+ - Better for iOS/mobile than custom caching
 
  2. **Memory Warning Handling**:
-    - Listens to UIApplication.didReceiveMemoryWarningNotification
-    - Proactively clears cache to prevent app termination
-    - Critical for iOS where memory is limited
+ - Listens to UIApplication.didReceiveMemoryWarningNotification
+ - Proactively clears cache to prevent app termination
+ - Critical for iOS where memory is limited
 
  3. **Cost-Based Eviction**:
-    - Images with higher cost evicted first
-    - Calculates cost based on pixel dimensions
-    - Ensures cache doesn't grow unbounded
+ - Images with higher cost evicted first
+ - Calculates cost based on pixel dimensions
+ - Ensures cache doesn't grow unbounded
 
  4. **Lazy Loading**:
-    - Images loaded on-demand
-    - Cache miss triggers network request
-    - Reduces initial memory footprint
+ - Images loaded on-demand
+ - Cache miss triggers network request
+ - Reduces initial memory footprint
 
  5. **Singleton Pattern**:
-    - Single shared instance reduces overhead
-    - Centralized cache management
-    - Prevents duplicate caches
+ - Single shared instance reduces overhead
+ - Centralized cache management
+ - Prevents duplicate caches
 
  PROFILING WITH INSTRUMENTS:
  - Use "Allocations" instrument to verify memory savings

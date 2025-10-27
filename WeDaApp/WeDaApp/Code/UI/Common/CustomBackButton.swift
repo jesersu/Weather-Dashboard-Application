@@ -10,7 +10,8 @@ import SwiftUI
 
 /// Custom styled back button with gradient background and haptic feedback
 struct CustomBackButton: View {
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.dismiss)
+    private var dismiss
 
     var body: some View {
         Button {

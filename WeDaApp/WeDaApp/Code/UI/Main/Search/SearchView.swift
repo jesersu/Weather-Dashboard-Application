@@ -10,7 +10,6 @@ import SwiftUI
 import DollarGeneralTemplateHelpers
 
 struct SearchView: View {
-
     @ObservedObject var viewModel: SearchViewModel
 
     var body: some View {
@@ -41,16 +40,15 @@ struct SearchView: View {
                     // Autocomplete overlay
                     if viewModel.showSuggestions && !viewModel.citySuggestions.isEmpty {
                         CitySuggestionsOverlay(
-                            suggestions: viewModel.citySuggestions,
-                            onSelect: { viewModel.selectSuggestion($0) }
-                        )
+                            suggestions: viewModel.citySuggestions
+                        ) { viewModel.selectSuggestion($0) }
                     }
                 }
             }
             .navigationTitle(L10n.Search.title)
             .navigationBarTitleDisplayMode(.large)
             .customNavigationBar()
-            .onChange(of: viewModel.searchText) { oldValue, newValue in
+            .onChange(of: viewModel.searchText) { _, newValue in
                 viewModel.searchCities(query: newValue)
             }
             .task {
@@ -59,8 +57,7 @@ struct SearchView: View {
         }
     }
 
-    @ViewBuilder
-    private var contentView: some View {
+    @ViewBuilder private var contentView: some View {
         if viewModel.isLoadingLocation {
             LoadingView(message: L10n.Search.gettingLocation)
                 .accessibilityIdentifier(UITestIDs.SearchView.locationLoadingView.rawValue)

@@ -13,7 +13,6 @@ import DollarGeneralPersist
 @testable import WeDaApp
 
 final class LocalStorageServiceSpec: QuickSpec {
-
     override class func spec() {
         describe("LocalStorageService") {
             var localStorageService: LocalStorageService!

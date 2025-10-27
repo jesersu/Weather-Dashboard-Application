@@ -11,7 +11,7 @@ let package = Package(
     products: [
         .library(
             name: "NetworkingKit",
-            targets: ["NetworkingKit"]),
+            targets: ["NetworkingKit"])
     ],
     targets: [
         .target(
@@ -19,6 +19,6 @@ let package = Package(
         .testTarget(
             name: "NetworkingKitTests",
             dependencies: ["NetworkingKit"]
-        ),
+        )
     ]
 )

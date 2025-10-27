@@ -11,7 +11,6 @@ import DollarGeneralPersist
 import DollarGeneralTemplateHelpers
 
 struct FavoritesView: View {
-
     @ObservedObject var viewModel: FavoritesViewModel
 
     var body: some View {

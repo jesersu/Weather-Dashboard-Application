@@ -51,7 +51,6 @@ public enum WeatherMapOverlay: String, CaseIterable {
 /// **Attribution**:
 /// Must display "Weather data © OpenWeatherMap" on map
 public final class OpenWeatherMapTileOverlay: MKTileOverlay {
-
     // MARK: - Properties
 
     private let layer: WeatherMapOverlay
@@ -88,13 +87,16 @@ public final class OpenWeatherMapTileOverlay: MKTileOverlay {
         // OpenWeatherMap tile URL format:
         // https://tile.openweathermap.org/map/{layer}/{z}/{x}/{y}.png?appid={API_key}
         let urlString = "https://tile.openweathermap.org/map/\(layer.rawValue)/\(path.z)/\(path.x)/\(path.y).png?appid=\(apiKey)"
-        return URL(string: urlString)!
+        guard let url = URL(string: urlString) else {
+            fatalError("Invalid tile URL: \(urlString)")
+        }
+        return url
     }
 
     public override func loadTile(at path: MKTileOverlayPath, result: @escaping (Data?, Error?) -> Void) {
         let tileURL = url(forTilePath: path)
 
-        let task = urlSession.dataTask(with: tileURL) { data, response, error in
+        let task = urlSession.dataTask(with: tileURL) { data, _, error in
             if let error = error {
                 result(nil, error)
                 return

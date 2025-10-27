@@ -35,7 +35,6 @@ public protocol SwiftDataManagerProtocol {
 /// Thread-safe operations using @MainActor
 @MainActor
 public final class SwiftDataManager: SwiftDataManagerProtocol {
-
     private let modelContainer: ModelContainer
     private let modelContext: ModelContext
     private let maxHistoryItems = 20
@@ -287,11 +286,11 @@ public final class SwiftDataManager: SwiftDataManagerProtocol {
 
 // MARK: - Model Container Factory
 
-extension SwiftDataManager {
+public extension SwiftDataManager {
     /// Create a persistent ModelContainer for production use
     /// - Returns: ModelContainer configured for persistent storage
     /// - Throws: Configuration errors
-    nonisolated public static func createPersistentContainer() throws -> ModelContainer {
+    nonisolated static func createPersistentContainer() throws -> ModelContainer {
         let schema = Schema([
             FavoriteCityModel.self,
             SearchHistoryModel.self,
@@ -312,7 +311,7 @@ extension SwiftDataManager {
     /// Create an in-memory ModelContainer for testing
     /// - Returns: ModelContainer configured for in-memory storage
     /// - Throws: Configuration errors
-    nonisolated public static func createInMemoryContainer() throws -> ModelContainer {
+    nonisolated static func createInMemoryContainer() throws -> ModelContainer {
         let schema = Schema([
             FavoriteCityModel.self,
             SearchHistoryModel.self,

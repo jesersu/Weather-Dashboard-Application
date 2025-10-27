@@ -9,7 +9,6 @@
 import SwiftUI
 
 struct MainTabView: View {
-
     // MARK: - ViewModels
     // Create ViewModels once at parent level - they persist across tab switches
     // This prevents view recreation and unwanted side effects (e.g., location refetch)

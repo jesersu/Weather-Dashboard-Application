@@ -13,7 +13,6 @@ import DollarGeneralPersist
 
 @main
 struct WeDaApp: App {
-
     // Background task manager for silent weather updates
     private let backgroundTaskManager = BackgroundTaskManager()
 

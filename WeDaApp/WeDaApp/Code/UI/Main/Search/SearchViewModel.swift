@@ -15,7 +15,6 @@ import DollarGeneralPersist
 
 @MainActor
 final class SearchViewModel: ObservableObject {
-
     // MARK: - Published Properties
 
     @Published private(set) var weatherData: WeatherData?
@@ -129,7 +128,6 @@ final class SearchViewModel: ObservableObject {
             )
             try? storageService.addToHistory(historyItem)
             LogInfo("Successfully fetched weather for \(weather.name)")
-
         } catch let apiError as APIError {
             // If offline and we have cached data, show it
             if apiError == .noInternetConnection {
@@ -321,7 +319,6 @@ final class SearchViewModel: ObservableObject {
             try? storageService.addToHistory(historyItem)
 
             LogInfo("Successfully fetched weather for current location: \(weather.name)")
-
         } catch let locationError as LocationError {
             LogError("Location error: \(locationError.message)")
             // Fallback to cached weather if available
@@ -406,10 +403,16 @@ final class SearchViewModel: ObservableObject {
 
             // Encode data
             let currentData = try JSONEncoder().encode(currentWeather)
-            let currentJSON = String(data: currentData, encoding: .utf8)!
+            guard let currentJSON = String(data: currentData, encoding: .utf8) else {
+                LogError("Failed to convert current weather data to JSON string")
+                return
+            }
 
             let forecastData = try JSONEncoder().encode(forecast)
-            let forecastJSON = String(data: forecastData, encoding: .utf8)
+            guard let forecastJSON = String(data: forecastData, encoding: .utf8) else {
+                LogError("Failed to convert forecast data to JSON string")
+                return
+            }
 
             // Save to cache
             let cache = WeatherCache(
@@ -420,7 +423,6 @@ final class SearchViewModel: ObservableObject {
             try storageService.saveWeatherCache(cache)
 
             LogInfo("Saved weather cache with forecast for \(city)")
-
         } catch {
             LogError("Failed to save weather cache: \(error)")
         }

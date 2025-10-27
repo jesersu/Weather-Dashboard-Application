@@ -55,7 +55,6 @@ public protocol LocationManagerProtocol: AnyObject {
 /// Only log authorization states and general success/failure messages.
 @MainActor
 public class LocationManager: NSObject, LocationManagerProtocol, ObservableObject {
-
     // MARK: - Published Properties
 
     @Published public private(set) var authorizationStatus: CLAuthorizationStatus = .notDetermined
@@ -140,7 +139,6 @@ public class LocationManager: NSObject, LocationManagerProtocol, ObservableObjec
 // MARK: - CLLocationManagerDelegate
 
 extension LocationManager: CLLocationManagerDelegate {
-
     public func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         let status = manager.authorizationStatus
         LogInfo("Location authorization changed: \(status.rawValue)")

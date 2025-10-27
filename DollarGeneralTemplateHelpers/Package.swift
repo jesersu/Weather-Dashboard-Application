@@ -11,7 +11,7 @@ let package = Package(
     products: [
         .library(
             name: "DollarGeneralTemplateHelpers",
-            targets: ["DollarGeneralTemplateHelpers"]),
+            targets: ["DollarGeneralTemplateHelpers"])
     ],
     targets: [
         .target(
@@ -19,6 +19,6 @@ let package = Package(
         .testTarget(
             name: "DollarGeneralTemplateHelpersTests",
             dependencies: ["DollarGeneralTemplateHelpers"]
-        ),
+        )
     ]
 )

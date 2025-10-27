@@ -10,7 +10,6 @@ import XCTest
 @testable import DollarGeneralPersist
 
 final class WeatherCacheTests: XCTestCase {
-
     // MARK: - Initialization Tests
 
     func test_init_setsPropertiesCorrectly() {

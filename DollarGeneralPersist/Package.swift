@@ -12,7 +12,7 @@ let package = Package(
     products: [
         .library(
             name: "DollarGeneralPersist",
-            targets: ["DollarGeneralPersist"]),
+            targets: ["DollarGeneralPersist"])
     ],
     targets: [
         .target(
@@ -20,6 +20,6 @@ let package = Package(
         .testTarget(
             name: "DollarGeneralPersistTests",
             dependencies: ["DollarGeneralPersist"]
-        ),
+        )
     ]
 )

@@ -12,7 +12,6 @@ import UserNotifications
 
 @MainActor
 final class NotificationManagerTests: XCTestCase {
-
     var sut: NotificationManager!
 
     override func setUp() async throws {

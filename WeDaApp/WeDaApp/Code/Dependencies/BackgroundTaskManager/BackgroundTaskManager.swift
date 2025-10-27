@@ -43,7 +43,6 @@ import DollarGeneralPersist
 /// - Error 2 (TooMany): More than 10 pending requests
 @MainActor
 final class BackgroundTaskManager {
-
     // MARK: - Constants
 
     /// Background task identifier (must match Info.plist)
@@ -254,7 +253,6 @@ final class BackgroundTaskManager {
             )
 
             return true
-
         } catch {
             LogError("❌ Background fetch failed: \(error.localizedDescription)")
             return false

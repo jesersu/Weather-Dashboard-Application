@@ -11,11 +11,10 @@ import Foundation
 import NetworkingKit
 
 public struct OpenWeatherMapAPIClient: APIClient {
-
     public init() {}
 
     @discardableResult
-    public func request<Response>(_ request: APIRequest<Response>) async throws -> Response where Response : Decodable {
+    public func request<Response>(_ request: APIRequest<Response>) async throws -> Response where Response: Decodable {
         let url = try buildURL(from: request)
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = request.method.stringValue

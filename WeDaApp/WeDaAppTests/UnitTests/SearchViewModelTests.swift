@@ -14,7 +14,6 @@ import DollarGeneralPersist
 
 @MainActor
 final class SearchViewModelTests: XCTestCase {
-
     var mockWeatherService: MockWeatherService!
     var mockStorageService: MockLocalStorageService!
     var mockLocationManager: MockLocationManager!
@@ -275,7 +274,6 @@ final class SearchViewModelTests: XCTestCase {
 // MARK: - Mock Services
 
 class MockWeatherService: WeatherServiceProtocol {
-
     var weatherResult: WeatherData?
     var forecastResult: ForecastResponse?
     var citiesResult: [GeocodeResult] = []

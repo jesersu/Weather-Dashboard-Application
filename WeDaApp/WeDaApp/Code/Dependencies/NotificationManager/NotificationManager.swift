@@ -33,7 +33,6 @@ import DollarGeneralTemplateHelpers
 /// - Test different authorization states
 @MainActor
 final class NotificationManager {
-
     // MARK: - Constants
 
     /// Minimum temperature drop (in °C) to trigger alert

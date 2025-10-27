@@ -12,7 +12,6 @@ import DollarGeneralTemplateHelpers
 
 @MainActor
 final class HistoryViewModel: ObservableObject {
-
     @Published var history: [SearchHistoryItem] = []
     @Published var isLoading = false
 

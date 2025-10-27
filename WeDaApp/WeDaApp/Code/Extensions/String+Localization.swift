@@ -11,7 +11,6 @@ import Foundation
 // MARK: - String Localization Extension
 
 public extension String {
-
     /// Returns a localized string for the given key
     /// Usage: "search.title".localized
     var localized: String {
@@ -30,7 +29,6 @@ public extension String {
 /// Strongly-typed localization keys to prevent typos and enable autocomplete
 /// Usage: L10n.search.title instead of "search.title".localized
 public enum L10n {
-
     // MARK: - Common
     public enum Common {
         public static let ok = "common.ok".localized

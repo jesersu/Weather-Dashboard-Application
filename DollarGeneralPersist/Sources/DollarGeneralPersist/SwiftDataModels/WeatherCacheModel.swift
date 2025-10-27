@@ -12,7 +12,8 @@ import SwiftData
 /// SwiftData model for weather cache persistence
 @Model
 public final class WeatherCacheModel {
-    @Attribute(.unique) public var id: UUID
+    @Attribute(.unique)
+    public var id: UUID
     public var cityName: String
     public var currentWeatherJSON: String
     public var forecastJSON: String?

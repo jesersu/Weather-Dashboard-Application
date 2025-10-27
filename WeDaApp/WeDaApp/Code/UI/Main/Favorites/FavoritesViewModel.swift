@@ -12,7 +12,6 @@ import DollarGeneralTemplateHelpers
 
 @MainActor
 final class FavoritesViewModel: ObservableObject {
-
     @Published var favorites: [FavoriteCity] = []
     @Published var isLoading = false
 

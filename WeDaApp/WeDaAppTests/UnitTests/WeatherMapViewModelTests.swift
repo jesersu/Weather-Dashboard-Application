@@ -13,7 +13,6 @@ import DollarGeneralPersist
 
 @MainActor
 final class WeatherMapViewModelTests: XCTestCase {
-
     var sut: WeatherMapViewModel!
     var mockWeatherService: MockWeatherService!
     var mockStorageService: MockLocalStorageService!

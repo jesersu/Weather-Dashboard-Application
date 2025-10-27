@@ -21,7 +21,10 @@ extension OpenWeatherMapEndpoint: Endpoint {
     public typealias Response = WeatherData
 
     public var baseURL: URL {
-        URL(string: ArkanaKeys.Global().openWeatherMapBaseUrl)!
+        guard let url = URL(string: ArkanaKeys.Global().openWeatherMapBaseUrl) else {
+            fatalError("Invalid base URL configuration")
+        }
+        return url
     }
 
     public var path: String {
@@ -41,14 +44,14 @@ extension OpenWeatherMapEndpoint: Endpoint {
         ]
 
         switch self {
-        case .currentWeather(let city), .forecast(let city):
+        case let .currentWeather(city), let .forecast(city):
             params["units"] = "metric"
             params["q"] = city
-        case .currentWeatherByCoordinates(let lat, let lon):
+        case let .currentWeatherByCoordinates(lat, lon):
             params["units"] = "metric"
             params["lat"] = String(lat)
             params["lon"] = String(lon)
-        case .geocoding(let query, let limit):
+        case let .geocoding(query, limit):
             params["q"] = query
             params["limit"] = String(limit)
         }
@@ -69,8 +72,8 @@ extension OpenWeatherMapEndpoint: Endpoint {
 }
 
 // Forecast endpoint needs its own response type
-extension OpenWeatherMapEndpoint {
-    public func buildForecast() -> APIRequest<ForecastResponse> {
+public extension OpenWeatherMapEndpoint {
+    func buildForecast() -> APIRequest<ForecastResponse> {
         .init(
             path: path,
             query: query,

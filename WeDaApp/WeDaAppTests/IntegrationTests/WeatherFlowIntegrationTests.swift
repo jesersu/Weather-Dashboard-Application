@@ -13,7 +13,6 @@ import DollarGeneralPersist
 
 @MainActor
 final class WeatherFlowIntegrationTests: XCTestCase {
-
     var mockWeatherService: MockWeatherService!
     var mockStorageService: MockLocalStorageService!
     var mockLocationManager: MockLocationManager!

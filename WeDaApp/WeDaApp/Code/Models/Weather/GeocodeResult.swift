@@ -10,7 +10,6 @@ import Foundation
 
 /// Represents a geocoding result from OpenWeatherMap Geocoding API
 public struct GeocodeResult: Codable, Identifiable, Equatable {
-
     /// Unique identifier (computed from coordinates for Identifiable conformance)
     public var id: String {
         "\(lat)-\(lon)"

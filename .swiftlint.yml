@@ -6,6 +6,7 @@ excluded:
   - Pods
   - ArkanaKeys
   - .build
+  - "**/.build"
   - DerivedData
   - fastlane
   - vendor
@@ -37,10 +38,7 @@ opt_in_rules:
   - extension_access_modifier
   - fallthrough
   - fatal_error_message
-  - file_header
   - first_where
-  - force_unwrapping
-  - implicitly_unwrapped_optional
   - joined_default_parameter
   - last_where
   - legacy_random
@@ -70,28 +68,21 @@ disabled_rules:
   - line_length # Can be too restrictive for SwiftUI
   - force_try # Allow force try in tests
   - force_cast # Allow force cast in tests
+  - file_header # Disable file header enforcement globally
+  - implicitly_unwrapped_optional # Common pattern in XCTest
+  - force_unwrapping # Allow in tests and where necessary
+  - function_body_length # Allow longer functions in BDD tests
+  - static_over_final_class # Allow class methods in test specs
 
 # Rule customization
-line_length:
-  warning: 150
-  error: 200
-  ignores_comments: true
-  ignores_urls: true
-  ignores_function_declarations: true
-  ignores_interpolated_strings: true
-
 file_length:
   warning: 500
   error: 1000
   ignore_comment_only_lines: true
 
-function_body_length:
-  warning: 50
-  error: 200  # More lenient for test files with describe/context blocks
-
 type_body_length:
-  warning: 300
-  error: 500
+  warning: 400  # Allow longer test classes
+  error: 600
 
 identifier_name:
   min_length:
@@ -105,6 +96,12 @@ identifier_name:
     - x
     - y
     - z
+    - i  # Common loop variable
+    - h  # Color components
+    - r  # Red color component
+    - g  # Green color component
+    - b  # Blue color component
+    - a  # Alpha color component
     - dt
     - LogInfo  # Public logging functions follow Swift's print() convention
     - LogError
@@ -122,28 +119,9 @@ nesting:
     warning: 3
     error: 5
 
-# Force unwrapping should be avoided but sometimes necessary
-force_unwrapping:
-  severity: warning
-
-# Implicitly unwrapped optionals are common in test setup
-implicitly_unwrapped_optional:
-  severity: warning
-
 # Vertical whitespace in tests is acceptable for readability
 vertical_whitespace_opening_braces:
   severity: warning
-
-# File header configuration
-file_header:
-  required_pattern: |
-                    \/\/
-                    \/\/  .*\.swift
-                    \/\/  .*
-                    \/\/
-                    \/\/  Created by .*
-                    \/\/  Copyright © \d{4} Dollar General\. All rights reserved\.
-                    \/\/
 
 # Custom reporter
 reporter: "xcode"

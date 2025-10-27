@@ -14,7 +14,6 @@ import SwiftData
 /// These tests define the expected behavior before implementation
 @MainActor
 final class SwiftDataManagerTests: XCTestCase {
-
     var manager: SwiftDataManager!
     var container: ModelContainer!
 

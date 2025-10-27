@@ -21,7 +21,6 @@ import SwiftUI
 /// - Subsequent loads: Instant from memory cache (~1ms vs ~200ms)
 /// - Memory: Managed automatically by NSCache
 struct CachedAsyncImage<Content: View, Placeholder: View>: View {
-
     // MARK: - Properties
 
     private let url: URL?
@@ -107,7 +106,6 @@ struct CachedAsyncImage<Content: View, Placeholder: View>: View {
                     self.cachedImage = image
                     self.isLoading = false
                 }
-
             } catch {
                 // Silently fail - placeholder remains visible
                 await MainActor.run {
@@ -137,29 +135,29 @@ extension CachedAsyncImage where Content == Image, Placeholder == ProgressView<E
  MOBILE OPTIMIZATION TECHNIQUES DEMONSTRATED:
 
  1. **Cache-First Strategy**:
-    - Always check cache before network request
-    - Reduces latency from ~200ms to ~1ms for cached images
-    - Critical for smooth scrolling in lists
+ - Always check cache before network request
+ - Reduces latency from ~200ms to ~1ms for cached images
+ - Critical for smooth scrolling in lists
 
  2. **URLSession Caching**:
-    - Leverages iOS URLCache for disk persistence
-    - Survives app restarts
-    - Respects HTTP cache headers
+ - Leverages iOS URLCache for disk persistence
+ - Survives app restarts
+ - Respects HTTP cache headers
 
  3. **Background Image Decoding**:
-    - UIImage(data:) on background thread
-    - Prevents main thread blocking during decode
-    - Smoother UI during image loads
+ - UIImage(data:) on background thread
+ - Prevents main thread blocking during decode
+ - Smoother UI during image loads
 
  4. **Automatic Memory Management**:
-    - NSCache handles memory pressure
-    - No manual cleanup needed
-    - Respects system memory warnings
+ - NSCache handles memory pressure
+ - No manual cleanup needed
+ - Respects system memory warnings
 
  5. **Efficient SwiftUI Integration**:
-    - Uses @State for reactive updates
-    - MainActor.run for thread-safe UI updates
-    - Minimal view updates (only when image loaded)
+ - Uses @State for reactive updates
+ - MainActor.run for thread-safe UI updates
+ - Minimal view updates (only when image loaded)
 
  PROFILING TIPS:
  - Use "Time Profiler" to verify reduced main thread blocking

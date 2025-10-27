@@ -30,7 +30,6 @@ public protocol LocalStorageServiceProtocol {
 /// Service for managing local data persistence using SwiftData
 /// Delegates to SwiftDataManager for all storage operations
 public class LocalStorageService: LocalStorageServiceProtocol {
-
     private let swiftDataManager: SwiftDataManagerProtocol
 
     /// Shared instance using persistent storage (lazy initialized on first access)

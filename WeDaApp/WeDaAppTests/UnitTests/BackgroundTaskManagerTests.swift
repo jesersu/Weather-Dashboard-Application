@@ -13,7 +13,6 @@ import DollarGeneralPersist
 
 @MainActor
 final class BackgroundTaskManagerTests: XCTestCase {
-
     var sut: BackgroundTaskManager!
     var mockWeatherService: MockWeatherService!
     var mockStorageService: MockLocalStorageService!

@@ -19,8 +19,7 @@ public struct WeatherCard: View {
 
     public var body: some View {
         VStack(spacing: AppSpacing.sm) {
-            
-            HStack(alignment: .center){
+            HStack(alignment: .center) {
                 // City name and country
                 VStack(spacing: AppSpacing.xs) {
                     Text(weatherData.name)
@@ -31,7 +30,7 @@ public struct WeatherCard: View {
                             .font(AppTypography.caption)
                             .foregroundColor(.secondary)
                     }
-                    
+
                     // Weather icon and description
                     // OPTIMIZATION: Using CachedAsyncImage instead of AsyncImage
                     // Benefits: Reduces network calls, improves scroll performance, saves bandwidth
@@ -53,8 +52,8 @@ public struct WeatherCard: View {
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .center)
-                
-                VStack(spacing: AppSpacing.sm ){
+
+                VStack(spacing: AppSpacing.sm ) {
                     // Temperature
                     Text("\(Int(weatherData.main.temp))°C")
                         .font(AppTypography.weatherTemp)
@@ -66,7 +65,6 @@ public struct WeatherCard: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .center)
             }
-  
 
             Divider()
                 .padding(.vertical, AppSpacing.sm)

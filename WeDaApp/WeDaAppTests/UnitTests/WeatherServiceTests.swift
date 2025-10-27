@@ -1,4 +1,4 @@
-    //
+//
 //  WeatherServiceTests.swift
 //  WeDaAppTests
 //
@@ -13,7 +13,6 @@ import DollarGeneralPersist
 
 @MainActor
 final class WeatherServiceTests: XCTestCase {
-
     var mockAPIClient: MockAPIClient!
     var weatherService: WeatherService!
 

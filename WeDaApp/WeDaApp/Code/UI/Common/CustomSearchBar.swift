@@ -98,9 +98,8 @@ struct CustomSearchBar: View {
     VStack(spacing: 20) {
         CustomSearchBar(
             text: .constant(""),
-            placeholder: "Search for a city...",
-            onSubmit: { print("Submit") }
-        )
+            placeholder: "Search for a city..."
+        ) { print("Submit") }
 
         CustomSearchBar(
             text: .constant("London"),

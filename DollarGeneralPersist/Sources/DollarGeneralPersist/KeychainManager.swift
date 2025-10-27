@@ -10,7 +10,6 @@ import Foundation
 import Security
 
 public class KeychainManager {
-
     public init() {}
 
     /// Save attribute to Keychain

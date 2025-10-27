@@ -52,7 +52,7 @@ typealias NoResponseRequest = APIRequest<EmptyResponse>
 
 extension APIRequest: CustomStringConvertible {
     public var description: String {
-"""
+        """
     Request(
     path: \(path),
     query: \(query ?? [:]),
