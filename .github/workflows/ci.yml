@@ -14,6 +14,23 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+      with:
+        lfs: false
+
+    - name: Ensure correct line endings for Xcode project files
+      run: |
+        # Verify git is using correct line ending configuration
+        git config core.autocrlf false
+        git config core.eol lf
+
+        # Check project file integrity
+        echo "Verifying project file..."
+        if plutil -lint WeDaApp/WeDaApp.xcodeproj/project.pbxproj > /dev/null 2>&1; then
+          echo "✓ Project file is valid"
+        else
+          echo "⚠ Project file validation failed, checking line endings..."
+          file WeDaApp/WeDaApp.xcodeproj/project.pbxproj
+        fi
 
     - name: Setup Xcode
       uses: maxim-lobanov/setup-xcode@v1
