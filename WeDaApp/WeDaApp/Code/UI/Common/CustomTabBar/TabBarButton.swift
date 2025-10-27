@@ -17,7 +17,6 @@ struct TabBarButton: View {
     @State private var isPressed = false
 
     var body: some View {
-        // swiftlint:disable:next multiple_closures_with_trailing_closure
         Button {
             // Haptic feedback
             let impact = UIImpactFeedbackGenerator(style: .light)
