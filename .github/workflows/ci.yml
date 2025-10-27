@@ -15,6 +15,23 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Diagnose project file
+      run: |
+        echo "=== Checking project file exists ==="
+        ls -la WeDaApp/WeDaApp.xcodeproj/project.pbxproj
+        echo ""
+        echo "=== File type and encoding ==="
+        file WeDaApp/WeDaApp.xcodeproj/project.pbxproj
+        echo ""
+        echo "=== First 5 lines ==="
+        head -5 WeDaApp/WeDaApp.xcodeproj/project.pbxproj
+        echo ""
+        echo "=== Checking for isa keys ==="
+        grep -c "isa = " WeDaApp/WeDaApp.xcodeproj/project.pbxproj || echo "No isa keys found!"
+        echo ""
+        echo "=== Git attributes ==="
+        git check-attr --all WeDaApp/WeDaApp.xcodeproj/project.pbxproj
+
     - name: Setup Xcode
       uses: maxim-lobanov/setup-xcode@v1
       with:
