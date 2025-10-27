@@ -243,13 +243,15 @@ final class WeatherDetailsViewModelTests: XCTestCase {
     }
 
     private func createMockForecastResponse() -> ForecastResponse {
-        let now = Date()
+        // Use a fixed start date at midnight to ensure consistent grouping across time zones
         let calendar = Calendar.current
+        let startDate = calendar.date(from: DateComponents(year: 2025, month: 1, day: 1, hour: 0, minute: 0, second: 0))!
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
 
         let forecastItems = (0..<40).map { index in
-            let date = calendar.date(byAdding: .hour, value: index * 3, to: now)!
+            let date = calendar.date(byAdding: .hour, value: index * 3, to: startDate)!
             let timestamp = Int(date.timeIntervalSince1970)
 
             return ForecastItem(

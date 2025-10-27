@@ -109,15 +109,15 @@ final class WeatherMapViewModelTests: XCTestCase {
         // Given
         mockStorageService.favorites = [FavoriteCity(cityName: "London", country: "GB", coordinates: Coordinates(lon: -0.1257, lat: 51.5074))]
         mockWeatherService.weatherDataToReturn = createMockWeatherData()
-        mockWeatherService.delay = 0.1
+        mockWeatherService.delay = 0.2 // Increased delay for more reliable testing
 
         // When
         Task {
             await sut.loadFavorites()
         }
 
-        // Then - Check loading immediately
-        try? await Task.sleep(nanoseconds: 10_000_000) // 0.01 seconds
+        // Then - Check loading state after brief delay (increased for CI reliability)
+        try? await Task.sleep(nanoseconds: 50_000_000) // 0.05 seconds (increased from 0.01)
         XCTAssertTrue(sut.isLoading, "Should be loading")
     }
 
