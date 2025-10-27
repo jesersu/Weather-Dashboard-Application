@@ -26,6 +26,11 @@ jobs:
         ruby-version: '3.2'
         bundler-cache: true
 
+    - name: Create .env file from secrets
+      run: |
+        echo "OpenWeatherMapAPIKey=${{ secrets.OPENWEATHERMAP_API_KEY }}" > .env
+        echo "OpenWeatherMapBaseUrl=${{ secrets.OPENWEATHERMAP_BASE_URL }}" >> .env
+
     - name: Install dependencies
       run: |
         bundle install
