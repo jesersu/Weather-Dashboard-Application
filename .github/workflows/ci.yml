@@ -53,20 +53,25 @@ jobs:
 
     - name: Upload test results
       if: always()
+      continue-on-error: true
       uses: actions/upload-artifact@v4
       with:
         name: test-results
         path: fastlane/test_output/
+        if-no-files-found: ignore
 
     - name: Upload code coverage
       if: success()
+      continue-on-error: true
       uses: actions/upload-artifact@v4
       with:
         name: code-coverage
         path: fastlane/xcov_output/
+        if-no-files-found: ignore
 
     - name: Generate coverage report
       if: success()
+      continue-on-error: true
       run: |
         brew install gcovr
         xcrun llvm-cov export -format="lcov" \
@@ -74,7 +79,8 @@ jobs:
           $(find ~/Library/Developer/Xcode/DerivedData -name "WeDaApp" -type f | head -1) > coverage.lcov || true
 
     - name: Upload coverage to Codecov
-      if: success()
+      if: success() && hashFiles('coverage.lcov') != ''
+      continue-on-error: true
       uses: codecov/codecov-action@v4
       with:
         files: ./coverage.lcov

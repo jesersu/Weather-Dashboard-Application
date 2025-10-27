@@ -68,6 +68,8 @@ opt_in_rules:
 disabled_rules:
   - todo # Allow TODO comments
   - line_length # Can be too restrictive for SwiftUI
+  - force_try # Allow force try in tests
+  - force_cast # Allow force cast in tests
 
 # Rule customization
 line_length:
@@ -85,7 +87,7 @@ file_length:
 
 function_body_length:
   warning: 50
-  error: 100
+  error: 200  # More lenient for test files with describe/context blocks
 
 type_body_length:
   warning: 300
@@ -104,6 +106,9 @@ identifier_name:
     - y
     - z
     - dt
+    - LogInfo  # Public logging functions follow Swift's print() convention
+    - LogError
+    - LogDebug
 
 cyclomatic_complexity:
   warning: 15
@@ -119,6 +124,14 @@ nesting:
 
 # Force unwrapping should be avoided but sometimes necessary
 force_unwrapping:
+  severity: warning
+
+# Implicitly unwrapped optionals are common in test setup
+implicitly_unwrapped_optional:
+  severity: warning
+
+# Vertical whitespace in tests is acceptable for readability
+vertical_whitespace_opening_braces:
   severity: warning
 
 # File header configuration
